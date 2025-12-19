@@ -3028,7 +3028,7 @@ const myVegData = [
     "sym": "粗硬髮柔軟",
     "name": "乳酸平衡護髮劑",
     "price": "1600",
-    "level": "vv",
+    "level": "v",
     "image": "https://lh3.googleusercontent.com/d/1GXna1XMmB_PTVl5FCh_ifYdNTJnYbLTj"
   },
   {
@@ -3036,7 +3036,7 @@ const myVegData = [
     "sym": "鬈髮柔順",
     "name": "乳酸平衡護髮劑",
     "price": "1600",
-    "level": "vv",
+    "level": "v",
     "image": "https://lh3.googleusercontent.com/d/1GXna1XMmB_PTVl5FCh_ifYdNTJnYbLTj"
   },
   {
@@ -3044,7 +3044,7 @@ const myVegData = [
     "sym": "染色髮護色",
     "name": "乳酸平衡護髮劑",
     "price": "1600",
-    "level": "vv",
+    "level": "v",
     "image": "https://lh3.googleusercontent.com/d/1GXna1XMmB_PTVl5FCh_ifYdNTJnYbLTj"
   },
   {
@@ -3068,7 +3068,7 @@ const myVegData = [
     "sym": "毛躁髮",
     "name": "乳酸平衡護髮劑",
     "price": "1600",
-    "level": "vv",
+    "level": "v",
     "image": "https://lh3.googleusercontent.com/d/1GXna1XMmB_PTVl5FCh_ifYdNTJnYbLTj"
   },
   {
@@ -3076,7 +3076,7 @@ const myVegData = [
     "sym": "分岔髮",
     "name": "乳酸平衡護髮劑",
     "price": "1600",
-    "level": "vv",
+    "level": "v",
     "image": "https://lh3.googleusercontent.com/d/1GXna1XMmB_PTVl5FCh_ifYdNTJnYbLTj"
   },
   {
