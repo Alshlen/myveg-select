@@ -122,20 +122,23 @@
 
                 // 強化版開啟 PDF 邏輯
                 const openPDF = (page) => {
-                    if (!page || page === "0" || page === "") {
+                // 1. 強效防呆：將 page 轉為字串並去除空白，檢查是否為無效值
+                const p = String(page || "").trim();
+    
+                if (p === "" || p === "0" || p === "undefined" || p === "null") {
+                    // 沒頁碼時彈出提示，不跳轉
                     alert("此產品目前尚無電子 DM 介紹。");
                     return;
-                    }
+                }
     
-                    // 取得純數字頁碼
-                    const actualPage = page.toString().split('-')[0];
+                // 2. 處理跨頁：如果輸入 "12-13"，只取 "-" 前面的 "12"
+                // 如果輸入的是純數字 "12"，則維持 "12"
+                const actualPage = p.split('-')[0];
     
-                    // 修正：使用更明確的相對路徑格式
-                    const pdfUrl = "catalog.pdf#page=" + actualPage;
-    
-                    // 執行跳轉
-                    window.open(pdfUrl, '_blank');
-                };
+                // 3. 執行跳轉
+                const pdfUrl = `catalog.pdf#page=${actualPage}`;
+                window.open(pdfUrl, '_blank');
+            };
 
                 return { 
                     categories, currentCat, symptomsOfCat, currentSym, 
