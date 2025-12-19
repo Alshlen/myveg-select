@@ -8,128 +8,133 @@
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css" rel="stylesheet">
     <style>
-        .product-card { transition: all 0.3s ease; }
-        .vv-premium { border: 2px solid #D4AF37; box-shadow: 0 4px 15px rgba(212, 175, 55, 0.2); }
+        .product-card { transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1); }
+        .vv-premium { border: 2px solid #D4AF37; box-shadow: 0 10px 20px rgba(212, 175, 55, 0.1); }
         .v-standard { border: 1px solid #e5e7eb; }
         .badge-vv { background: linear-gradient(45deg, #D4AF37, #F9E27E); color: #5c441a; }
     </style>
 </head>
-<body class="bg-gray-50 text-gray-800">
+<body class="bg-gray-50 text-gray-800 font-sans">
     <div id="app" class="max-w-4xl mx-auto px-4 py-8">
         
         <header class="text-center mb-12 animate__animated animate__fadeIn">
             <div class="flex justify-center mb-4">
-        <img src="Logo_MYVEG.jpg" alt="MyVeg Logo" class="h-12 w-auto object-contain"> 
+                <img src="Logo_MYVEG%20.jpg" alt="MyVeg Logo" class="h-12 w-auto object-contain drop-shadow-sm">
             </div>
-            <h1 class="text-3xl font-bold text-emerald-800 mb-2">MyVeg 智能養護建議</h1>
-            <p class="text-gray-500">專業級植物配方，為您的狀態精準導航</p>
+            <h1 class="text-2xl font-bold text-emerald-800 mb-1">智能養護建議</h1>
+            <p class="text-xs text-gray-400 tracking-[0.2em] uppercase">Professional Plant-Based Care</p>
         </header>
 
         <section class="mb-10">
-            <h2 class="text-lg font-semibold mb-4 flex items-center">
-                <span class="bg-emerald-600 text-white w-7 h-7 rounded-full flex items-center justify-center mr-2 text-sm">1</span>
-                請選擇關心的部位
+            <h2 class="text-sm font-bold text-gray-400 mb-4 flex items-center">
+                <span class="w-5 h-px bg-gray-300 mr-2"></span> 01 選擇關心部位
             </h2>
             <div class="grid grid-cols-2 md:grid-cols-4 gap-3">
                 <button v-for="cat in categories" :key="cat" 
                     @click="selectCategory(cat)"
-                    :class="['py-3 px-4 rounded-xl text-sm font-medium transition-all', 
-                    currentCat === cat ? 'bg-emerald-600 text-white shadow-lg' : 'bg-white text-emerald-800 border border-emerald-100 hover:bg-emerald-50']">
+                    :class="['py-3 px-2 rounded-xl text-sm font-medium transition-all', 
+                    currentCat === cat ? 'bg-emerald-700 text-white shadow-md' : 'bg-white text-emerald-800 border border-emerald-100 hover:bg-emerald-50']">
                     {{ cat }}
                 </button>
             </div>
         </section>
 
         <section v-if="currentCat" class="mb-10 animate__animated animate__fadeInUp">
-            <h2 class="text-lg font-semibold mb-4 flex items-center">
-                <span class="bg-emerald-600 text-white w-7 h-7 rounded-full flex items-center justify-center mr-2 text-sm">2</span>
-                具體需求是什麼？
+            <h2 class="text-sm font-bold text-gray-400 mb-4 flex items-center">
+                <span class="w-5 h-px bg-gray-300 mr-2"></span> 02 具體需求
             </h2>
             <div class="flex flex-wrap gap-2">
                 <button v-for="sym in symptomsOfCat" :key="sym" 
                     @click="selectSymptom(sym)"
-                    :class="['py-2 px-5 rounded-full text-sm transition-all border', 
-                    currentSym === sym ? 'bg-emerald-800 text-white' : 'bg-white text-gray-600 hover:border-emerald-300']">
+                    :class="['py-2 px-5 rounded-full text-xs transition-all border', 
+                    currentSym === sym ? 'bg-emerald-900 text-white border-emerald-900' : 'bg-white text-gray-600 border-gray-200 hover:border-emerald-300']">
                     {{ sym }}
                 </button>
             </div>
         </section>
 
         <section v-if="filteredProducts.length > 0" class="animate__animated animate__fadeIn">
-            <h2 class="text-lg font-semibold mb-6 flex items-center border-t pt-8">
-                <span class="bg-emerald-600 text-white w-7 h-7 rounded-full flex items-center justify-center mr-2 text-sm">3</span>
-                為您推薦的方案
-            </h2>
+            <div class="flex items-center justify-between mb-6 border-t pt-8">
+                <h2 class="text-sm font-bold text-gray-400 flex items-center">
+                    <span class="w-5 h-px bg-gray-300 mr-2"></span> 03 推薦方案
+                </h2>
+                <span class="text-[10px] text-gray-400 italic">點擊具備「查看詳情」之產品開啟 DM</span>
+            </div>
+
             <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
                 <div v-for="p in filteredProducts" :key="p.name" 
+                    @click="openPDF(p.pdfPage)"
                     class="product-card bg-white rounded-2xl overflow-hidden relative"
-                    :class="p.level === 'vv' ? 'vv-premium' : 'v-standard'">
+                    :class="[
+                        p.level === 'vv' ? 'vv-premium' : 'v-standard',
+                        (p.pdfPage && p.pdfPage !== '0' && p.pdfPage !== '') ? 'cursor-pointer hover:shadow-lg hover:-translate-y-1' : 'cursor-default'
+                    ]">
                     
-                    <div v-if="p.level === 'vv'" class="absolute top-3 right-3 badge-vv px-3 py-1 rounded-full text-xs font-bold shadow-sm z-10">
+                    <div v-if="p.level === 'vv'" class="absolute top-3 right-3 badge-vv px-3 py-1 rounded-full text-[10px] font-bold shadow-sm z-10">
                         ⭐ 極力推薦
                     </div>
 
                     <div class="flex p-4">
-                        <div class="w-32 h-32 flex-shrink-0 bg-gray-100 rounded-lg overflow-hidden">
+                        <div class="w-28 h-28 flex-shrink-0 bg-gray-50 rounded-lg overflow-hidden border border-gray-100">
                             <img v-if="p.image" :src="p.image" class="w-full h-full object-cover">
-                            <div v-else class="w-full h-full flex items-center justify-center text-gray-400 text-xs text-center p-2">暫無圖片</div>
+                            <div v-else class="w-full h-full flex items-center justify-center text-gray-300 text-[10px] text-center p-2">IMAGE</div>
                         </div>
-                        <div class="ml-5 flex-grow">
-                            <h3 class="font-bold text-gray-900 text-lg mb-1">{{ p.name }}</h3>
-                            <p class="text-emerald-700 font-bold mb-2">NT$ {{ p.price }}</p>
-                            <div class="text-xs text-gray-400">針對症狀：</div>
-                            <p class="text-sm text-gray-600">{{ currentSym }}</p>
+                        <div class="ml-4 flex-grow flex flex-col justify-center">
+                            <h3 class="font-bold text-gray-900 text-base mb-1">{{ p.name }}</h3>
+                            <p class="text-emerald-700 font-bold text-sm mb-2">NT$ {{ p.price }}</p>
+                            
+                            <div v-if="p.pdfPage && p.pdfPage !== '0' && p.pdfPage !== ''" class="flex items-center text-[10px] text-emerald-600 font-medium">
+                                <svg class="w-3 h-3 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253"></path></svg>
+                                查看詳情 (P.{{ p.pdfPage }})
+                            </div>
                         </div>
                     </div>
                 </div>
             </div>
         </section>
 
-        <div v-if="currentSym && filteredProducts.length === 0" class="text-center py-20 text-gray-400">
-            此症狀目前尚無推薦產品
-        </div>
-
+        <footer class="mt-20 text-center text-[10px] text-gray-300 tracking-widest">
+            © MYVEG PROFESSIONAL ALL RIGHTS RESERVED.
+        </footer>
     </div>
 
     <script src="data.js"></script>
-
     <script>
         const { createApp, ref, computed } = Vue;
-
         createApp({
             setup() {
-                // 資料來源為 data.js 中的 myVegData 變數
                 const database = typeof myVegData !== 'undefined' ? myVegData : [];
                 const currentCat = ref('');
                 const currentSym = ref('');
-
-                // 提取唯一大類
                 const categories = [...new Set(database.map(item => item.cat))];
-                
-                // 根據選中大類過濾症狀
                 const symptomsOfCat = computed(() => {
                     if (!currentCat.value) return [];
                     return [...new Set(database.filter(i => i.cat === currentCat.value).map(i => i.sym))];
                 });
-
-                // 根據選中症狀過濾產品，並讓 vv 排在最前
                 const filteredProducts = computed(() => {
                     if (!currentSym.value) return [];
                     return database
                         .filter(i => i.sym === currentSym.value)
                         .sort((a, b) => b.level.length - a.level.length);
                 });
+                const selectCategory = (cat) => { currentCat.value = cat; currentSym.value = ''; };
+                const selectSymptom = (sym) => { currentSym.value = sym; };
 
-                const selectCategory = (cat) => {
-                    currentCat.value = cat;
-                    currentSym.value = '';
+                // 強化版開啟 PDF 邏輯
+                const openPDF = (page) => {
+                    if (!page || page === "0" || page === "") {
+                        // 如果沒有頁碼，不執行任何跳轉
+                        return;
+                    }
+                    const actualPage = page.toString().split('-')[0];
+                    const pdfUrl = `catalog.pdf#page=${actualPage}`;
+                    window.open(pdfUrl, '_blank');
                 };
 
-                const selectSymptom = (sym) => {
-                    currentSym.value = sym;
+                return { 
+                    categories, currentCat, symptomsOfCat, currentSym, 
+                    filteredProducts, selectCategory, selectSymptom, openPDF 
                 };
-
-                return { categories, currentCat, symptomsOfCat, currentSym, filteredProducts, selectCategory, selectSymptom };
             }
         }).mount('#app');
     </script>
