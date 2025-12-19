@@ -1,0 +1,143 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MyVeg 智能養護選品</title>
+    <script src="https://unpkg.com/vue@3/dist/vue.global.js"></script>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css" rel="stylesheet">
+    <style>
+        .product-card { transition: all 0.3s ease; }
+        .vv-premium { border: 2px solid #D4AF37; box-shadow: 0 4px 15px rgba(212, 175, 55, 0.2); }
+        .v-standard { border: 1px solid #e5e7eb; }
+        .badge-vv { background: linear-gradient(45deg, #D4AF37, #F9E27E); color: #5c441a; }
+        .step-active { color: #059669; border-bottom: 3px solid #059669; }
+    </style>
+</head>
+<body class="bg-gray-50 text-gray-800">
+    <div id="app" class="max-w-4xl mx-auto px-4 py-8">
+        
+        <header class="text-center mb-12 animate__animated animate__fadeIn">
+            <h1 class="text-3xl font-bold text-emerald-800 mb-2">MyVeg 智能養護建議</h1>
+            <p class="text-gray-500">根據您的肌膚與髮絲狀態，為您挑選最適合的配方</p>
+        </header>
+
+        <section class="mb-10">
+            <h2 class="text-lg font-semibold mb-4 flex items-center">
+                <span class="bg-emerald-600 text-white w-7 h-7 rounded-full flex items-center justify-center mr-2 text-sm">1</span>
+                請選擇關心的部位
+            </h2>
+            <div class="grid grid-cols-2 md:grid-cols-4 gap-3">
+                <button v-for="cat in categories" :key="cat" 
+                    @click="selectCategory(cat)"
+                    :class="['py-3 px-4 rounded-xl text-sm font-medium transition-all', 
+                    currentCat === cat ? 'bg-emerald-600 text-white shadow-lg' : 'bg-white text-emerald-800 border border-emerald-100 hover:bg-emerald-50']">
+                    {{ cat }}
+                </button>
+            </div>
+        </section>
+
+        <section v-if="currentCat" class="mb-10 animate__animated animate__fadeInUp">
+            <h2 class="text-lg font-semibold mb-4 flex items-center">
+                <span class="bg-emerald-600 text-white w-7 h-7 rounded-full flex items-center justify-center mr-2 text-sm">2</span>
+                具體需求是什麼？
+            </h2>
+            <div class="flex flex-wrap gap-2">
+                <button v-for="sym in symptomsOfCat" :key="sym" 
+                    @click="selectSymptom(sym)"
+                    :class="['py-2 px-5 rounded-full text-sm transition-all border', 
+                    currentSym === sym ? 'bg-emerald-800 text-white' : 'bg-white text-gray-600 hover:border-emerald-300']">
+                    {{ sym }}
+                </button>
+            </div>
+        </section>
+
+        <section v-if="filteredProducts.length > 0" class="animate__animated animate__fadeIn">
+            <h2 class="text-lg font-semibold mb-6 flex items-center">
+                <span class="bg-emerald-600 text-white w-7 h-7 rounded-full flex items-center justify-center mr-2 text-sm">3</span>
+                為您推薦的方案 ({{ filteredProducts.length }} 款)
+            </h2>
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <div v-for="p in filteredProducts" :key="p.name" 
+                    class="product-card bg-white rounded-2xl overflow-hidden relative"
+                    :class="p.level === 'vv' ? 'vv-premium' : 'v-standard'">
+                    
+                    <div v-if="p.level === 'vv'" class="absolute top-3 right-3 badge-vv px-3 py-1 rounded-full text-xs font-bold shadow-sm z-10">
+                        ⭐ 極力推薦
+                    </div>
+
+                    <div class="flex p-4">
+                        <div class="w-32 h-32 flex-shrink-0 bg-gray-100 rounded-lg overflow-hidden">
+                            <img v-if="p.image" :src="p.image" class="w-full h-full object-cover">
+                            <div v-else class="w-full h-full flex items-center justify-center text-gray-400 text-xs text-center p-2">暫無圖片</div>
+                        </div>
+                        
+                        <div class="ml-5 flex-grow">
+                            <h3 class="font-bold text-gray-900 text-lg mb-1">{{ p.name }}</h3>
+                            <p class="text-emerald-700 font-bold mb-2">NT$ {{ p.price }}</p>
+                            <div class="text-xs text-gray-400">適配症狀：</div>
+                            <p class="text-sm text-gray-600">{{ currentSym }}</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <div v-if="currentSym && filteredProducts.length === 0" class="text-center py-20 text-gray-400">
+            目前此症狀尚無推薦產品
+        </div>
+
+    </div>
+
+    <script>
+        const { createApp, ref, computed, onMounted } = Vue;
+
+        createApp({
+            setup() {
+                const rawData = ref([]); // 這裡將存放轉換後的 JSON 資料
+                const currentCat = ref('');
+                const currentSym = ref('');
+
+                // 這些資料是從您的試算表邏輯中提取的關鍵對應
+                // 為了展示效果，我預載了幾筆代表性資料，建議您稍後將 CSV 轉成 JSON 貼進來
+                const database = [
+                    { cat: "臉部肌膚狀態評估", sym: "出油粉刺痘痘", name: "火山泥膜", price: "6000", level: "vv", image: "https://lh3.googleusercontent.com/d/1Jmz_nwXkDFF6gjx1p-Am9yBsn-gUzJru" },
+                    { cat: "臉部肌膚狀態評估", sym: "出油粉刺痘痘", name: "火山淚", price: "2400", level: "vv", image: "https://lh3.googleusercontent.com/d/10kW63V2MpsJtjThLNyiJAm_4czXO-OIe" },
+                    { cat: "臉部肌膚狀態評估", sym: "敏感紅腫", name: "雲朵泡泡", price: "1600", level: "vv", image: "https://lh3.googleusercontent.com/d/13Wdu7lzwEx-tCafYC1VW27FtRCE1-aHI" },
+                    { cat: "頭皮狀態評估", sym: "頭皮癢", name: "沁香淨化髮浴", price: "3000", level: "vv", image: "https://lh3.googleusercontent.com/d/1Xo3X_6AtfHtumzIR6ICA6V0to6RBTAeV" },
+                    { cat: "頭皮狀態評估", sym: "頭皮屑", name: "火山泥膜", price: "6000", level: "vv", image: "https://lh3.googleusercontent.com/d/1Jmz_nwXkDFF6gjx1p-Am9yBsn-gUzJru" },
+                    { cat: "髮絲狀態評估", sym: "毛躁髮", name: "妝模作樣", price: "1800", level: "vv", image: "https://lh3.googleusercontent.com/d/1csvc6-fQBNG9LUTfEdBNqgnPZQbzADUw" },
+                    { cat: "情緒狀態評估", sym: "釋放壓力", name: "精油三重奏", price: "2400", level: "vv", image: "https://lh3.googleusercontent.com/d/1QRL6owjDsb-KEgfo_5x6XWyDJvc5Ox3z" }
+                    // ... 這裡可以放入更多從試算表轉換來的資料
+                ];
+
+                const categories = [...new Set(database.map(item => item.cat))];
+                
+                const symptomsOfCat = computed(() => {
+                    if (!currentCat.value) return [];
+                    return [...new Set(database.filter(i => i.cat === currentCat.value).map(i => i.sym))];
+                });
+
+                const filteredProducts = computed(() => {
+                    if (!currentSym.value) return [];
+                    return database
+                        .filter(i => i.sym === currentSym.value)
+                        .sort((a, b) => (b.level.length - a.level.length)); // vv 排在 v 前面
+                });
+
+                const selectCategory = (cat) => {
+                    currentCat.value = cat;
+                    currentSym.value = '';
+                };
+
+                const selectSymptom = (sym) => {
+                    currentSym.value = sym;
+                };
+
+                return { categories, currentCat, symptomsOfCat, currentSym, filteredProducts, selectCategory, selectSymptom };
+            }
+        }).mount('#app');
+    </script>
+</body>
+</html>
