@@ -123,11 +123,17 @@
                 // 強化版開啟 PDF 邏輯
                 const openPDF = (page) => {
                     if (!page || page === "0" || page === "") {
-                        // 如果沒有頁碼，不執行任何跳轉
-                        return;
+                    alert("此產品目前尚無電子 DM 介紹。");
+                    return;
                     }
+    
+                    // 取得純數字頁碼
                     const actualPage = page.toString().split('-')[0];
-                    const pdfUrl = `catalog.pdf#page=${actualPage}`;
+    
+                    // 修正：使用更明確的相對路徑格式
+                    const pdfUrl = "catalog.pdf#page=" + actualPage;
+    
+                    // 執行跳轉
                     window.open(pdfUrl, '_blank');
                 };
 
