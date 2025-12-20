@@ -22,26 +22,26 @@
         
         <header class="text-center mb-14">
             <div class="flex justify-center mb-6">
-                <img src="Logo_MYVEG%20.jpg" alt="Logo" class="h-16 w-auto object-contain" @error="(e) => e.target.src='https://via.placeholder.com/150?text=Logo'">
+                <img src="Logo_MYVEG.jpg" alt="Logo" class="h-16 w-auto object-contain">
             </div>
-            <h1 class="text-3xl font-black color-dm-green mb-2">智能養護建議</h1>
+            <h1 class="text-3xl font-black color-dm-green mb-2 tracking-tight">智能養護建議</h1>
             <p class="text-sm font-bold color-dm-brown tracking-[0.3em] uppercase">Professional Plant-Based Care</p>
         </header>
 
         <section v-if="products.length > 0" class="mb-10">
-            <h2 class="text-xl font-black text-gray-700 mb-8 flex items-center">
-                <span class="w-10 h-[3px] bg-gray-600 mr-4"></span> 03 推薦方案
+            <h2 class="text-xl font-black text-gray-600 mb-8 flex items-center">
+                <span class="w-10 h-[3px] bg-gray-500 mr-4"></span> 03 推薦方案
             </h2>
             
             <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
                 <div v-for="item in products" :key="item.name" @click="openDetail(item)" 
-                     class="bg-white rounded-[32px] p-6 shadow-sm border border-gray-100 cursor-pointer hover:shadow-xl transition-all">
+                     class="bg-white rounded-[32px] p-6 shadow-sm border border-gray-100 cursor-pointer hover:shadow-xl transition-all animate__animated animate__fadeIn">
                     <div class="flex items-center">
                         <img :src="item.image" class="w-28 h-28 bg-[#F9F8F3] rounded-2xl flex-shrink-0 object-contain border border-gray-50" :alt="item.name">
                         <div class="ml-6 flex-1">
                             <div class="text-xs color-dm-brown font-black mb-1">⭐ 極力推薦</div>
                             <h3 class="font-black text-xl color-dm-green mb-1">{{ item.name }}</h3>
-                            <p class="text-base text-gray-400 italic">查看詳情</p>
+                            <p class="text-base text-gray-400 font-medium italic">查看產品詳情</p>
                         </div>
                     </div>
                 </div>
@@ -50,26 +50,37 @@
 
         <transition name="animate__animated" enter-active-class="animate__fadeIn" leave-active-class="animate__fadeOut">
             <div v-if="showDetail" class="fixed inset-0 z-50 flex items-end md:items-center justify-center p-0 md:p-6 modal-overlay">
+                
                 <div class="bg-white w-full max-w-2xl max-h-[94vh] rounded-t-[40px] md:rounded-[40px] overflow-hidden flex flex-col animate__animated animate__slideInUp animate__faster">
                     
-                    <button @click="showDetail = false" class="absolute top-6 right-6 z-10 bg-white/90 rounded-full p-3 shadow-lg">
+                    <button @click="showDetail = false" class="absolute top-6 right-6 z-10 bg-white/90 rounded-full p-3 shadow-lg active:scale-90 transition-all">
                         <svg class="w-8 h-8 color-dm-green" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-width="3" d="M6 18L18 6M6 6l12 12"></path></svg>
                     </button>
 
                     <div class="overflow-y-auto no-scrollbar color-dm-bg pb-16">
                         <div class="p-12 text-center border-b border-dm-brown/20">
                             <img :src="selectedProduct?.image" class="w-64 h-64 mx-auto mb-8 object-contain">
-                            <p class="text-sm color-dm-brown font-bold tracking-[0.2em] mb-2 uppercase">Professional Care</p>
+                            <p class="text-sm color-dm-brown font-bold tracking-[0.2em] mb-2 uppercase">MyVeg Selection</p>
                             <h2 class="text-4xl font-black color-dm-green">{{ selectedProduct?.name }}</h2>
                         </div>
 
                         <div class="px-8 py-10">
                             <div class="mb-12 text-center px-4">
-                                <p class="text-lg color-dm-green font-bold mb-4">專業植萃配方</p>
+                                <p class="text-xl color-dm-green font-bold mb-4">專業植萃配方</p>
                                 <div class="w-12 h-[1px] bg-gray-300 mx-auto mb-6"></div>
                                 <p class="text-lg text-gray-700 leading-relaxed">
-                                    此產品目前正在同步詳細 DM 資訊中。
+                                    此產品目前正在同步詳細 DM 資訊中。<br>
+                                    MyVeg 致力於將自然的力量帶入您的日常護理。
                                 </p>
+                            </div>
+
+                            <div class="grid grid-cols-3 gap-y-10 gap-x-4 py-8 border-y border-dm-brown/20">
+                                <div v-for="attr in ['天然植萃', '深層淨化', '舒緩頭皮', '溫和修護', '平衡油脂', '活化髮絲']" class="text-center">
+                                    <div class="w-12 h-12 mx-auto mb-3 flex items-center justify-center border border-dm-brown/40 rounded-full">
+                                        <div class="w-1.5 h-1.5 bg-dm-brown rotate-45"></div>
+                                    </div>
+                                    <span class="text-[12px] font-bold color-dm-brown leading-tight">{{ attr }}</span>
+                                </div>
                             </div>
                         </div>
                     </div>
@@ -87,12 +98,13 @@
                 const showDetail = ref(false);
                 const selectedProduct = ref(null);
 
+                // 解析 data.js 的資料
                 const loadData = async () => {
                     try {
-                        // 確保 data.js 檔案存在且路徑正確
                         const response = await fetch('data.js');
-                        const scriptText = await response.text();
-                        const jsonData = JSON.parse(scriptText.replace('const products = ', '').replace(';', ''));
+                        const text = await response.text();
+                        // 這裡處理 data.js 內容，轉為 JSON 物件
+                        const jsonData = JSON.parse(text.replace('const products = ', '').replace(';', ''));
                         products.value = jsonData;
                     } catch (e) {
                         console.error("資料載入失敗:", e);
