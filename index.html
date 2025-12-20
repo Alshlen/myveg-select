@@ -70,4 +70,69 @@
                     <div class="overflow-y-auto no-scrollbar color-dm-bg pb-16">
                         <div class="p-12 text-center border-b border-dm-brown/20">
                             <img :src="selectedProduct?.image" class="w-64 h-64 mx-auto mb-8 object-contain">
-                            <p class="text-sm color-dm-brown
+                            <p class="text-sm color-dm-brown font-bold tracking-[0.2em] mb-2 uppercase">MyVeg Selection</p>
+                            <h2 class="text-4xl font-black color-dm-green leading-tight">{{ selectedProduct?.name }}</h2>
+                        </div>
+
+                        <div class="px-8 py-10">
+                            <div class="mb-12 text-center px-4">
+                                <p class="text-2xl color-dm-green font-bold mb-6">專業植萃養護配方</p>
+                                <div class="w-16 h-[1.5px] bg-dark-gray/30 mx-auto mb-8"></div>
+                                <p class="text-xl text-gray-700 leading-relaxed font-medium">
+                                    我們正在為 {{ selectedProduct?.name }} 準備更詳細的介紹內容。<br>
+                                    請參考產品清單中的建議進行使用。
+                                </p>
+                            </div>
+
+                            <div class="grid grid-cols-3 gap-y-10 gap-x-4 py-10 border-y border-dm-brown/20">
+                                <div v-for="attr in ['天然植萃', '深層淨化', '舒緩頭皮', '溫和修護', '平衡油脂', '活化髮絲']" class="text-center">
+                                    <div class="w-14 h-14 mx-auto mb-3 flex items-center justify-center border-2 border-dm-brown/30 rounded-full">
+                                        <div class="w-2 h-2 bg-dm-brown rotate-45"></div>
+                                    </div>
+                                    <span class="text-sm font-black color-dm-brown leading-tight">{{ attr }}</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </transition>
+
+    </div>
+
+    <script>
+        const { createApp, ref, onMounted } = Vue;
+        createApp({
+            setup() {
+                const products = ref([]);
+                const showDetail = ref(false);
+                const selectedProduct = ref(null);
+
+                // 抓取您原本的 data.js
+                const loadData = async () => {
+                    try {
+                        const response = await fetch('data.js');
+                        if (!response.ok) throw new Error('Network response was not ok');
+                        const text = await response.text();
+                        
+                        // 這裡與您原本成功的版本邏輯一致
+                        const jsonData = JSON.parse(text.replace('const products = ', '').replace(';', ''));
+                        products.value = jsonData;
+                    } catch (e) {
+                        console.error("載入失敗:", e);
+                    }
+                };
+
+                const openDetail = (item) => {
+                    selectedProduct.value = item;
+                    showDetail.value = true;
+                };
+
+                onMounted(loadData);
+
+                return { products, showDetail, selectedProduct, openDetail };
+            }
+        }).mount('#app');
+    </script>
+</body>
+</html>
