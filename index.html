@@ -103,7 +103,7 @@
         const { createApp, ref, computed } = Vue;
         createApp({
             setup() {
-                const database = typeof myVegData !== 'undefined' ? myVegData : [];
+                const database = typeof products !== 'undefined' ? products : [];
                 const currentCat = ref('');
                 const currentSym = ref('');
                 const categories = [...new Set(database.map(item => item.cat))];
