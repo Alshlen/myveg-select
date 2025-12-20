@@ -9,21 +9,22 @@
     <link href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css" rel="stylesheet">
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@400;500;700;900&display=swap');
-        body { font-family: 'Noto Sans TC', sans-serif; font-size: 18px; background-color: #F4F4F4; }
+        body { font-family: 'Noto Sans TC', sans-serif; background-color: #F4F4F4; }
         
         /* DM 指定配色 */
         .color-dm-bg { background-color: #F9F8F3; } 
         .color-dm-green { color: #1A3C34; } 
         .color-dm-brown { color: #8C764D; } 
-        .bg-dm-green { background-color: #1A3C34; }
         
-        /* 強化灰色標記 (03 部分) */
-        .text-dark-gray { color: #4B5563; } /* 更深的灰色 */
+        /* 強化灰色標記 */
+        .text-dark-gray { color: #4B5563; } 
         .bg-dark-gray { background-color: #4B5563; }
 
         .modal-overlay { background: rgba(26, 60, 52, 0.85); backdrop-filter: blur(8px); }
         .no-scrollbar::-webkit-scrollbar { display: none; }
-        .product-card { transition: all 0.3s ease; }
+        
+        /* 全域字體加大 */
+        .text-base-plus { font-size: 1.15rem; } /* 約 18-19px */
     </style>
 </head>
 <body class="text-gray-800">
@@ -37,12 +38,36 @@
             <p class="text-sm font-bold color-dm-brown tracking-[0.3em] uppercase">Professional Plant-Based Care</p>
         </header>
 
-        <section v-if="products.length > 0" class="mb-10">
+        <section v-if="products.length > 0" class="mb-10 animate__animated animate__fadeIn">
             <h2 class="text-2xl font-black text-dark-gray mb-8 flex items-center">
                 <span class="w-12 h-[3px] bg-dark-gray mr-4"></span> 03 推薦方案
             </h2>
             
             <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
                 <div v-for="item in products" :key="item.name" @click="openDetail(item)" 
-                     class="product-card bg-white rounded-[32px] p-6 shadow-sm border border-gray-100 cursor-pointer hover:shadow-xl">
-                    <div
+                     class="bg-white rounded-[32px] p-6 shadow-sm border border-gray-100 cursor-pointer hover:shadow-xl transition-all">
+                    <div class="flex items-center">
+                        <img :src="item.image" class="w-32 h-32 bg-[#F9F8F3] rounded-2xl flex-shrink-0 object-contain border border-gray-50">
+                        <div class="ml-6 flex-1">
+                            <div class="text-sm color-dm-brown font-black mb-1">⭐ 極力推薦</div>
+                            <h3 class="font-black text-2xl color-dm-green mb-2">{{ item.name }}</h3>
+                            <p class="text-lg text-gray-500 font-medium italic">點擊查看詳情</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <transition name="animate__animated" enter-active-class="animate__fadeIn" leave-active-class="animate__fadeOut">
+            <div v-if="showDetail" class="fixed inset-0 z-50 flex items-end md:items-center justify-center p-0 md:p-6 modal-overlay">
+                
+                <div class="bg-white w-full max-w-2xl max-h-[94vh] rounded-t-[40px] md:rounded-[40px] overflow-hidden flex flex-col animate__animated animate__slideInUp animate__faster">
+                    
+                    <button @click="showDetail = false" class="absolute top-6 right-6 z-10 bg-white/90 rounded-full p-3 shadow-lg active:scale-90 transition-all">
+                        <svg class="w-8 h-8 color-dm-green" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-width="3" d="M6 18L18 6M6 6l12 12"></path></svg>
+                    </button>
+
+                    <div class="overflow-y-auto no-scrollbar color-dm-bg pb-16">
+                        <div class="p-12 text-center border-b border-dm-brown/20">
+                            <img :src="selectedProduct?.image" class="w-64 h-64 mx-auto mb-8 object-contain">
+                            <p class="text-sm color-dm-brown
