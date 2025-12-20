@@ -3,16 +3,18 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>MyVeg 診斷修復版</title>
-    <script src="data.js"></script>
+    <title>MyVeg 智能養護選品</title>
     <script src="https://unpkg.com/vue@3/dist/vue.global.js"></script>
     <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css" rel="stylesheet">
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@400;500;700;900&display=swap');
-        body { font-family: 'Noto Sans TC', sans-serif; background-color: #F4F4F4; }
+        body { font-family: 'Noto Sans TC', sans-serif; font-size: 18px; background-color: #F4F4F4; }
+        .color-dm-bg { background-color: #F9F8F3; } 
         .color-dm-green { color: #1A3C34; } 
         .color-dm-brown { color: #8C764D; } 
         .modal-overlay { background: rgba(0, 0, 0, 0.8); backdrop-filter: blur(8px); }
+        .no-scrollbar::-webkit-scrollbar { display: none; }
     </style>
 </head>
 <body class="text-gray-800">
@@ -23,90 +25,93 @@
                 <img src="Logo_MYVEG.jpg" alt="Logo" class="h-16 w-auto object-contain">
             </div>
             <h1 class="text-3xl font-black color-dm-green mb-2">智能養護建議</h1>
-            <p class="text-sm font-bold color-dm-brown tracking-[0.3em] uppercase">Diagnostic Mode</p>
+            <p class="text-sm font-bold color-dm-brown tracking-[0.3em] uppercase">Professional Plant-Based Care</p>
         </header>
 
-        <section v-if="localProducts.length > 0" class="animate__animated animate__fadeIn">
-             <h2 class="text-2xl font-black text-gray-600 mb-8 flex items-center">
+        <section v-if="products.length > 0" class="mb-10 animate__animated animate__fadeIn">
+            <h2 class="text-2xl font-black text-gray-600 mb-8 flex items-center">
                 <span class="w-12 h-[3px] bg-gray-600 mr-4"></span> 03 推薦方案
             </h2>
+            
             <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
-                <div v-for="item in localProducts" :key="item.name" @click="openDetail(item)" 
-                     class="bg-white rounded-[32px] p-6 shadow-sm border border-gray-100 cursor-pointer">
+                <div v-for="item in products" :key="item.name" @click="openDetail(item)" 
+                     class="bg-white rounded-[32px] p-6 shadow-sm border border-gray-100 cursor-pointer hover:shadow-xl transition-all">
                     <div class="flex items-center">
-                        <img :src="item.image" class="w-32 h-32 bg-[#F9F8F3] rounded-2xl flex-shrink-0 object-contain">
+                        <img :src="item.image" class="w-32 h-32 bg-[#F9F8F3] rounded-2xl flex-shrink-0 object-contain" @error="(e) => e.target.src='https://via.placeholder.com/150'">
                         <div class="ml-6 flex-1">
                             <h3 class="font-black text-2xl color-dm-green mb-2">{{ item.name }}</h3>
-                            <p class="text-lg text-gray-500 font-medium">查看產品詳情</p>
+                            <p class="text-lg text-gray-400 font-medium italic">點擊查看詳情</p>
                         </div>
                     </div>
                 </div>
             </div>
         </section>
 
-        <div v-else class="text-center py-20 bg-white rounded-3xl shadow-inner border-2 border-dashed border-gray-200">
-            <p class="text-red-500 font-bold mb-4">⚠️ 資料載入異常</p>
-            <div class="text-sm text-gray-500 text-left inline-block p-4 bg-gray-50 rounded-lg">
-                診斷資訊：<br>
-                - 檔案讀取狀態：{{ debugInfo }}<br>
-                - 嘗試變數 A (window.products): {{ hasWindowVar }}<br>
-                - 嘗試變數 B (products): {{ hasGlobalVar }}
-            </div>
-            <p class="mt-6 text-gray-400 text-xs text-center">正在嘗試手動連接 Google Sheets 資料...</p>
+        <div v-else class="text-center py-20 text-gray-400">
+            <p class="mb-4">資料同步中，請稍候...</p>
+            <div class="animate-spin rounded-full h-8 w-8 border-b-2 border-emerald-800 mx-auto"></div>
         </div>
 
-        <div v-if="showDetail" class="fixed inset-0 z-50 flex items-center justify-center p-6 modal-overlay" @click.self="showDetail = false">
-            <div class="bg-white w-full max-w-lg rounded-[40px] p-10 relative animate__animated animate__zoomIn animate__faster text-center">
-                <button @click="showDetail = false" class="absolute top-6 right-6 font-bold text-2xl">✕</button>
-                <h2 class="text-3xl font-black color-dm-green mb-6">{{ selectedProduct?.name }}</h2>
-                <div class="w-16 h-1 bg-gray-200 mx-auto mb-6"></div>
-                <p class="text-xl text-gray-700">字體加大與配色測試成功！</p>
+        <transition name="animate__animated" enter-active-class="animate__fadeIn" leave-active-class="animate__fadeOut">
+            <div v-if="showDetail" class="fixed inset-0 z-50 flex items-end md:items-center justify-center p-0 md:p-6 modal-overlay" @click.self="closeDetail">
+                <div class="bg-white w-full max-w-2xl max-h-[94vh] rounded-t-[40px] md:rounded-[40px] overflow-hidden flex flex-col animate__animated animate__slideInUp animate__faster">
+                    <button @click.stop="closeDetail" class="absolute top-6 right-6 z-10 bg-white/90 rounded-full p-3 shadow-lg border border-gray-100">
+                        <svg class="w-8 h-8 color-dm-green" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-width="3" d="M6 18L18 6M6 6l12 12"></path></svg>
+                    </button>
+                    <div class="overflow-y-auto no-scrollbar color-dm-bg pb-16">
+                        <div class="p-12 text-center border-b border-dm-brown/20">
+                            <img :src="selectedProduct?.image" class="w-64 h-64 mx-auto mb-8 object-contain">
+                            <h2 class="text-4xl font-black color-dm-green">{{ selectedProduct?.name }}</h2>
+                        </div>
+                        <div class="px-8 py-10 text-center">
+                            <p class="text-xl text-gray-700 leading-relaxed font-bold">火山泥膜點擊測試成功</p>
+                            <p class="mt-4 text-gray-500">字體已按需求加大，顏色已同步 DM 配色。</p>
+                        </div>
+                    </div>
+                </div>
             </div>
-        </div>
-
+        </transition>
     </div>
 
     <script>
         const { createApp, ref, onMounted } = Vue;
         createApp({
             setup() {
-                const localProducts = ref([]);
+                const products = ref([]);
                 const showDetail = ref(false);
                 const selectedProduct = ref(null);
-                
-                const debugInfo = ref("初始化中...");
-                const hasWindowVar = ref("否");
-                const hasGlobalVar = ref("否");
 
-                onMounted(() => {
-                    // 診斷開始
+                const loadData = async () => {
                     try {
-                        if (typeof window.products !== 'undefined') {
-                            hasWindowVar.value = "是 (Array 長度: " + window.products.length + ")";
-                            localProducts.value = window.products;
-                        } 
+                        // 使用 fetch 加上時間戳，防止瀏覽器抓到舊的快取
+                        const response = await fetch('data.js?t=' + new Date().getTime());
+                        const text = await response.text();
                         
-                        if (typeof products !== 'undefined' && localProducts.value.length === 0) {
-                            hasGlobalVar.value = "是 (Array 長度: " + products.length + ")";
-                            localProducts.value = products;
-                        }
-
-                        if (localProducts.value.length === 0) {
-                            debugInfo.value = "找不到 products 變數。這通常是因為 data.js 的內容格式與預期不符。";
+                        // 強制從文字中挖出 [ ... ] 陣列內容，無視變數名稱
+                        const arrayMatch = text.match(/\[[\s\S]*\]/);
+                        if (arrayMatch) {
+                            products.value = JSON.parse(arrayMatch[0]);
                         } else {
-                            debugInfo.value = "成功讀取資料！";
+                            throw new Error("格式錯誤");
                         }
                     } catch (e) {
-                        debugInfo.value = "錯誤: " + e.message;
+                        console.error("載入失敗:", e);
                     }
-                });
+                };
 
                 const openDetail = (item) => {
                     selectedProduct.value = item;
                     showDetail.value = true;
+                    document.body.style.overflow = 'hidden';
                 };
 
-                return { localProducts, showDetail, selectedProduct, openDetail, debugInfo, hasWindowVar, hasGlobalVar };
+                const closeDetail = () => {
+                    showDetail.value = false;
+                    document.body.style.overflow = 'auto';
+                };
+
+                onMounted(loadData);
+                return { products, showDetail, selectedProduct, openDetail, closeDetail };
             }
         }).mount('#app');
     </script>
