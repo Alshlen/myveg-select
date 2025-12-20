@@ -4,6 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>MyVeg 智能養護選品</title>
+    <script src="data.js"></script>
     <script src="https://unpkg.com/vue@3/dist/vue.global.js"></script>
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css" rel="stylesheet">
@@ -15,8 +16,9 @@
         .color-dm-brown { color: #8C764D; } 
         .modal-overlay { background: rgba(0, 0, 0, 0.8); backdrop-filter: blur(8px); }
         .no-scrollbar::-webkit-scrollbar { display: none; }
-        /* 確保按鈕在最上層 */
-        .close-btn { z-index: 100; cursor: pointer; -webkit-tap-highlight-color: transparent; }
+        /* 強化 03 灰色標記 */
+        .text-dark-gray { color: #4B5563; } 
+        .bg-dark-gray { background-color: #4B5563; }
     </style>
 </head>
 <body class="text-gray-800">
@@ -30,34 +32,35 @@
             <p class="text-sm font-bold color-dm-brown tracking-[0.3em] uppercase">Professional Plant-Based Care</p>
         </header>
 
-        <section v-if="products.length > 0" class="mb-10">
-            <h2 class="text-2xl font-black text-gray-600 mb-8 flex items-center">
-                <span class="w-12 h-[3px] bg-gray-500 mr-4"></span> 03 推薦方案
+        <section v-if="localProducts && localProducts.length > 0" class="mb-10 animate__animated animate__fadeIn">
+            <h2 class="text-2xl font-black text-dark-gray mb-8 flex items-center">
+                <span class="w-12 h-[3px] bg-dark-gray mr-4"></span> 03 推薦方案
             </h2>
             
             <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
-                <div v-for="item in products" :key="item.name" @click="openDetail(item)" 
+                <div v-for="item in localProducts" :key="item.name" @click="openDetail(item)" 
                      class="bg-white rounded-[32px] p-6 shadow-sm border border-gray-100 cursor-pointer hover:shadow-xl transition-all">
                     <div class="flex items-center">
-                        <img :src="item.image" class="w-32 h-32 bg-[#F9F8F3] rounded-2xl flex-shrink-0 object-contain">
+                        <img :src="item.image" class="w-32 h-32 bg-[#F9F8F3] rounded-2xl flex-shrink-0 object-contain" @error="(e) => e.target.src='https://via.placeholder.com/150'">
                         <div class="ml-6 flex-1">
                             <h3 class="font-black text-2xl color-dm-green mb-2">{{ item.name }}</h3>
-                            <p class="text-lg text-gray-500 font-medium">點擊查看詳情</p>
+                            <p class="text-lg text-gray-500 font-medium italic tracking-wide">查看產品詳情</p>
                         </div>
                     </div>
                 </div>
             </div>
         </section>
 
+        <div v-else class="text-center py-20 text-gray-400">
+            正在等待資料同步...<br>請確認 data.js 是否與本頁面在同一目錄下。
+        </div>
+
         <transition name="animate__animated" enter-active-class="animate__fadeIn" leave-active-class="animate__fadeOut">
             <div v-if="showDetail" class="fixed inset-0 z-50 flex items-end md:items-center justify-center p-0 md:p-6 modal-overlay" @click.self="closeDetail">
-                
                 <div class="bg-white w-full max-w-2xl max-h-[94vh] rounded-t-[40px] md:rounded-[40px] overflow-hidden flex flex-col animate__animated animate__slideInUp animate__faster">
                     
-                    <button @click.stop="closeDetail" class="close-btn absolute top-6 right-6 bg-white/90 rounded-full p-3 shadow-lg hover:bg-white active:scale-95 transition-all border border-gray-100">
-                        <svg class="w-8 h-8 color-dm-green" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-width="3" d="M6 18L18 6M6 6l12 12"></path>
-                        </svg>
+                    <button @click.stop="closeDetail" class="absolute top-6 right-6 z-10 bg-white/90 rounded-full p-3 shadow-lg border border-gray-100">
+                        <svg class="w-8 h-8 color-dm-green" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-width="3" d="M6 18L18 6M6 6l12 12"></path></svg>
                     </button>
 
                     <div class="overflow-y-auto no-scrollbar color-dm-bg pb-16">
@@ -66,9 +69,7 @@
                             <h2 class="text-4xl font-black color-dm-green">{{ selectedProduct?.name }}</h2>
                         </div>
                         <div class="px-8 py-10 text-center">
-                            <p class="text-xl text-gray-700 leading-relaxed font-medium">
-                                正在為您讀取詳細介紹內容...
-                            </p>
+                            <p class="text-xl text-gray-700 leading-relaxed font-medium">產品詳細資訊讀取中...</p>
                         </div>
                     </div>
                 </div>
@@ -81,35 +82,33 @@
         const { createApp, ref, onMounted } = Vue;
         createApp({
             setup() {
-                const products = ref([]);
+                // 直接讀取 data.js 裡面的 products 變數
+                // 注意：這裡假設 data.js 開頭是 const products = ...
+                const localProducts = ref([]);
                 const showDetail = ref(false);
                 const selectedProduct = ref(null);
 
-                const loadData = async () => {
-                    try {
-                        const response = await fetch('data.js');
-                        const text = await response.text();
-                        const jsonData = JSON.parse(text.replace('const products = ', '').replace(';', ''));
-                        products.value = jsonData;
-                    } catch (e) { console.error("資料載入失敗", e); }
-                };
+                onMounted(() => {
+                    // 檢查全域環境下是否存在 products 變數
+                    if (window.products) {
+                        localProducts.value = window.products;
+                    } else {
+                        console.error("找不到 data.js 定義的 products 變數");
+                    }
+                });
 
                 const openDetail = (item) => {
                     selectedProduct.value = item;
                     showDetail.value = true;
-                    // 防止背景捲動
                     document.body.style.overflow = 'hidden';
                 };
 
                 const closeDetail = () => {
                     showDetail.value = false;
-                    // 恢復背景捲動
                     document.body.style.overflow = 'auto';
                 };
 
-                onMounted(loadData);
-
-                return { products, showDetail, selectedProduct, openDetail, closeDetail };
+                return { localProducts, showDetail, selectedProduct, openDetail, closeDetail };
             }
         }).mount('#app');
     </script>
