@@ -3,112 +3,76 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>MyVeg 智能養護選品</title>
+    <title>MyVeg 測試診斷版</title>
     <script src="data.js"></script>
     <script src="https://unpkg.com/vue@3/dist/vue.global.js"></script>
     <script src="https://cdn.tailwindcss.com"></script>
-    <link href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css" rel="stylesheet">
     <style>
-        @import url('https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@400;500;700;900&display=swap');
-        body { font-family: 'Noto Sans TC', sans-serif; background-color: #F4F4F4; }
-        .color-dm-bg { background-color: #F9F8F3; } 
-        .color-dm-green { color: #1A3C34; } 
-        .color-dm-brown { color: #8C764D; } 
-        .modal-overlay { background: rgba(0, 0, 0, 0.8); backdrop-filter: blur(8px); }
-        .no-scrollbar::-webkit-scrollbar { display: none; }
-        /* 強化 03 灰色標記 */
-        .text-dark-gray { color: #4B5563; } 
-        .bg-dark-gray { background-color: #4B5563; }
+        body { font-family: sans-serif; background-color: #F4F4F4; padding: 20px; }
+        .debug-info { font-size: 12px; color: red; text-align: center; margin-bottom: 20px; }
     </style>
 </head>
-<body class="text-gray-800">
-    <div id="app" class="max-w-4xl mx-auto px-4 py-10">
-        
-        <header class="text-center mb-14">
-            <div class="flex justify-center mb-6">
-                <img src="Logo_MYVEG.jpg" alt="Logo" class="h-16 w-auto object-contain">
-            </div>
-            <h1 class="text-3xl font-black color-dm-green mb-2">智能養護建議</h1>
-            <p class="text-sm font-bold color-dm-brown tracking-[0.3em] uppercase">Professional Plant-Based Care</p>
+<body>
+    <div id="app">
+        <header class="text-center mb-10">
+            <img src="Logo_MYVEG.jpg" class="h-16 mx-auto mb-4" @error="(e) => e.target.src='https://via.placeholder.com/150?text=Logo+Missing'">
+            <h1 class="text-2xl font-bold text-emerald-900">智能養護建議 (診斷版)</h1>
         </header>
 
-        <section v-if="localProducts && localProducts.length > 0" class="mb-10 animate__animated animate__fadeIn">
-            <h2 class="text-2xl font-black text-dark-gray mb-8 flex items-center">
-                <span class="w-12 h-[3px] bg-dark-gray mr-4"></span> 03 推薦方案
-            </h2>
-            
-            <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
-                <div v-for="item in localProducts" :key="item.name" @click="openDetail(item)" 
-                     class="bg-white rounded-[32px] p-6 shadow-sm border border-gray-100 cursor-pointer hover:shadow-xl transition-all">
-                    <div class="flex items-center">
-                        <img :src="item.image" class="w-32 h-32 bg-[#F9F8F3] rounded-2xl flex-shrink-0 object-contain" @error="(e) => e.target.src='https://via.placeholder.com/150'">
-                        <div class="ml-6 flex-1">
-                            <h3 class="font-black text-2xl color-dm-green mb-2">{{ item.name }}</h3>
-                            <p class="text-lg text-gray-500 font-medium italic tracking-wide">查看產品詳情</p>
-                        </div>
+        <div class="debug-info" v-if="debugMsg">{{ debugMsg }}</div>
+
+        <div class="grid grid-cols-1 gap-6">
+            <div v-for="item in localProducts" :key="item.name" @click="openDetail(item)" 
+                 class="bg-white p-6 rounded-2xl shadow-sm border border-gray-200">
+                <div class="flex items-center">
+                    <div class="w-20 h-20 bg-gray-100 rounded-lg flex-shrink-0 flex items-center justify-center">圖</div>
+                    <div class="ml-4">
+                        <h3 class="font-bold text-xl">{{ item.name }}</h3>
+                        <p class="text-sm text-gray-400">點擊測試彈窗</p>
                     </div>
                 </div>
             </div>
-        </section>
-
-        <div v-else class="text-center py-20 text-gray-400">
-            正在等待資料同步...<br>請確認 data.js 是否與本頁面在同一目錄下。
         </div>
 
-        <transition name="animate__animated" enter-active-class="animate__fadeIn" leave-active-class="animate__fadeOut">
-            <div v-if="showDetail" class="fixed inset-0 z-50 flex items-end md:items-center justify-center p-0 md:p-6 modal-overlay" @click.self="closeDetail">
-                <div class="bg-white w-full max-w-2xl max-h-[94vh] rounded-t-[40px] md:rounded-[40px] overflow-hidden flex flex-col animate__animated animate__slideInUp animate__faster">
-                    
-                    <button @click.stop="closeDetail" class="absolute top-6 right-6 z-10 bg-white/90 rounded-full p-3 shadow-lg border border-gray-100">
-                        <svg class="w-8 h-8 color-dm-green" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-width="3" d="M6 18L18 6M6 6l12 12"></path></svg>
-                    </button>
-
-                    <div class="overflow-y-auto no-scrollbar color-dm-bg pb-16">
-                        <div class="p-12 text-center border-b border-dm-brown/20">
-                            <img :src="selectedProduct?.image" class="w-64 h-64 mx-auto mb-8 object-contain">
-                            <h2 class="text-4xl font-black color-dm-green">{{ selectedProduct?.name }}</h2>
-                        </div>
-                        <div class="px-8 py-10 text-center">
-                            <p class="text-xl text-gray-700 leading-relaxed font-medium">產品詳細資訊讀取中...</p>
-                        </div>
-                    </div>
-                </div>
+        <div v-if="showDetail" class="fixed inset-0 bg-black/80 flex items-center justify-center p-6 z-50">
+            <div class="bg-white p-10 rounded-3xl w-full max-w-sm text-center relative">
+                <button @click="showDetail = false" class="absolute top-4 right-4 font-bold text-2xl">✕</button>
+                <h2 class="text-2xl font-bold mb-4">{{ selectedProduct.name }}</h2>
+                <p>彈窗測試成功！字體已加大。</p>
             </div>
-        </transition>
-
+        </div>
     </div>
 
     <script>
         const { createApp, ref, onMounted } = Vue;
         createApp({
             setup() {
-                // 直接讀取 data.js 裡面的 products 變數
-                // 注意：這裡假設 data.js 開頭是 const products = ...
                 const localProducts = ref([]);
                 const showDetail = ref(false);
                 const selectedProduct = ref(null);
+                const debugMsg = ref("");
 
                 onMounted(() => {
-                    // 檢查全域環境下是否存在 products 變數
-                    if (window.products) {
+                    console.log("Vue 已啟動");
+                    // 檢查全域變數
+                    if (window.products && Array.isArray(window.products)) {
                         localProducts.value = window.products;
+                        console.log("成功讀取 data.js 資料");
                     } else {
-                        console.error("找不到 data.js 定義的 products 變數");
+                        debugMsg.value = "警告：找不到 data.js 資料，啟動緊急預覽模式";
+                        localProducts.value = [
+                            { name: "測試產品 A (火山泥膜替代)", image: "" },
+                            { name: "測試產品 B", image: "" }
+                        ];
                     }
                 });
 
                 const openDetail = (item) => {
                     selectedProduct.value = item;
                     showDetail.value = true;
-                    document.body.style.overflow = 'hidden';
                 };
 
-                const closeDetail = () => {
-                    showDetail.value = false;
-                    document.body.style.overflow = 'auto';
-                };
-
-                return { localProducts, showDetail, selectedProduct, openDetail, closeDetail };
+                return { localProducts, showDetail, selectedProduct, openDetail, debugMsg };
             }
         }).mount('#app');
     </script>
