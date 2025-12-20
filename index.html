@@ -3,84 +3,95 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>MyVeg 智能養護選品</title>
+    <title>MyVeg 智能養護選品 - 測試版</title>
     <script src="https://unpkg.com/vue@3/dist/vue.global.js"></script>
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css" rel="stylesheet">
     <style>
-        @import url('https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@400;500;700;900&display=swap');
-        body { font-family: 'Noto Sans TC', sans-serif; font-size: 18px; background-color: #F4F4F4; }
-        .color-dm-bg { background-color: #F9F8F3; } 
-        .color-dm-green { color: #1A3C34; } 
-        .color-dm-brown { color: #8C764D; } 
-        .modal-overlay { background: rgba(26, 60, 52, 0.85); backdrop-filter: blur(8px); }
+        .product-card { transition: all 0.3s ease; }
+        .vv-premium { border: 2px solid #D4AF37; }
+        /* 彈窗背景遮罩 */
+        .modal-overlay { background: rgba(0, 0, 0, 0.7); backdrop-filter: blur(4px); }
+        /* 隱藏捲軸 */
         .no-scrollbar::-webkit-scrollbar { display: none; }
     </style>
 </head>
-<body class="text-gray-800">
-    <div id="app" class="max-w-4xl mx-auto px-4 py-10">
+<body class="bg-gray-50 text-gray-800">
+    <div id="app" class="max-w-4xl mx-auto px-4 py-8">
         
-        <header class="text-center mb-14">
-            <div class="flex justify-center mb-6">
-                <img src="Logo_MYVEG.jpg" alt="Logo" class="h-16 w-auto object-contain">
+        <header class="text-center mb-12">
+            <div class="flex justify-center mb-4">
+                <img src="Logo_MYVEG%20.jpg" alt="Logo" class="h-10 w-auto object-contain">
             </div>
-            <h1 class="text-3xl font-black color-dm-green mb-2 tracking-tight">智能養護建議</h1>
-            <p class="text-sm font-bold color-dm-brown tracking-[0.3em] uppercase">Professional Plant-Based Care</p>
+            <h1 class="text-xl font-bold text-emerald-800">智能養護建議</h1>
         </header>
 
-        <section v-if="products.length > 0" class="mb-10">
-            <h2 class="text-xl font-black text-gray-600 mb-8 flex items-center">
-                <span class="w-10 h-[3px] bg-gray-500 mr-4"></span> 03 推薦方案
-            </h2>
-            
-            <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
-                <div v-for="item in products" :key="item.name" @click="openDetail(item)" 
-                     class="bg-white rounded-[32px] p-6 shadow-sm border border-gray-100 cursor-pointer hover:shadow-xl transition-all animate__animated animate__fadeIn">
-                    <div class="flex items-center">
-                        <img :src="item.image" class="w-28 h-28 bg-[#F9F8F3] rounded-2xl flex-shrink-0 object-contain border border-gray-50" :alt="item.name">
-                        <div class="ml-6 flex-1">
-                            <div class="text-xs color-dm-brown font-black mb-1">⭐ 極力推薦</div>
-                            <h3 class="font-black text-xl color-dm-green mb-1">{{ item.name }}</h3>
-                            <p class="text-base text-gray-400 font-medium italic">查看產品詳情</p>
-                        </div>
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <div @click="showDetail = true" class="product-card bg-white rounded-2xl p-4 shadow-sm border border-emerald-100 cursor-pointer hover:shadow-md">
+                <div class="flex items-center">
+                    <img src="https://alshlen.github.io/myveg-select/catalog.pdf" class="w-24 h-24 object-cover rounded-lg bg-gray-100" alt="火山泥膜">
+                    <div class="ml-4">
+                        <div class="text-xs text-emerald-600 font-bold mb-1">⭐ 極力推薦</div>
+                        <h3 class="font-bold text-lg">火山泥膜</h3>
+                        <p class="text-sm text-gray-400">點擊查看詳細介紹</p>
                     </div>
                 </div>
             </div>
-        </section>
+        </div>
 
         <transition name="animate__animated" enter-active-class="animate__fadeIn" leave-active-class="animate__fadeOut">
-            <div v-if="showDetail" class="fixed inset-0 z-50 flex items-end md:items-center justify-center p-0 md:p-6 modal-overlay">
+            <div v-if="showDetail" class="fixed inset-0 z-50 flex items-end md:items-center justify-center p-0 md:p-4 modal-overlay">
                 
-                <div class="bg-white w-full max-w-2xl max-h-[94vh] rounded-t-[40px] md:rounded-[40px] overflow-hidden flex flex-col animate__animated animate__slideInUp animate__faster">
+                <div class="bg-white w-full max-w-2xl max-h-[90vh] rounded-t-3xl md:rounded-3xl overflow-hidden flex flex-col animate__animated animate__slideInUp animate__faster">
                     
-                    <button @click="showDetail = false" class="absolute top-6 right-6 z-10 bg-white/90 rounded-full p-3 shadow-lg active:scale-90 transition-all">
-                        <svg class="w-8 h-8 color-dm-green" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-width="3" d="M6 18L18 6M6 6l12 12"></path></svg>
-                    </button>
+                    <div class="relative">
+                        <button @click="showDetail = false" class="absolute top-4 right-4 z-10 bg-white/80 rounded-full p-2 shadow-md">
+                            <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path d="M6 18L18 6M6 6l12 12"></path></svg>
+                        </button>
+                    </div>
 
-                    <div class="overflow-y-auto no-scrollbar color-dm-bg pb-16">
-                        <div class="p-12 text-center border-b border-dm-brown/20">
-                            <img :src="selectedProduct?.image" class="w-64 h-64 mx-auto mb-8 object-contain">
-                            <p class="text-sm color-dm-brown font-bold tracking-[0.2em] mb-2 uppercase">MyVeg Selection</p>
-                            <h2 class="text-4xl font-black color-dm-green">{{ selectedProduct?.name }}</h2>
+                    <div class="overflow-y-auto no-scrollbar pb-10">
+                        <div class="bg-emerald-50 p-8 text-center">
+                            <img src="https://alshlen.github.io/myveg-select/catalog.pdf" class="w-48 h-48 mx-auto object-contain drop-shadow-xl mb-6">
+                            <h2 class="text-2xl font-bold text-gray-900 mb-1">火山泥膜</h2>
+                            <p class="text-sm tracking-widest text-emerald-700 font-medium">FITOARGILLA FUNZIONALE</p>
                         </div>
 
-                        <div class="px-8 py-10">
-                            <div class="mb-12 text-center px-4">
-                                <p class="text-xl color-dm-green font-bold mb-4">專業植萃配方</p>
-                                <div class="w-12 h-[1px] bg-gray-300 mx-auto mb-6"></div>
-                                <p class="text-lg text-gray-700 leading-relaxed">
-                                    此產品目前正在同步詳細 DM 資訊中。<br>
-                                    MyVeg 致力於將自然的力量帶入您的日常護理。
+                        <div class="px-6 py-8">
+                            <div class="mb-8 border-l-4 border-emerald-600 pl-4">
+                                <p class="italic text-emerald-800 font-medium mb-3">「當頭皮學會深呼吸，髮絲便能夠自由飛翔」</p>
+                                <p class="text-sm text-gray-600 leading-relaxed">
+                                    讓綠泥與沸石化為湧泉，溶解頭皮上淤積的文明。排除重金屬毒物，舒緩疲憊與壓力，煥發輕盈透氣感。
                                 </p>
                             </div>
 
-                            <div class="grid grid-cols-3 gap-y-10 gap-x-4 py-8 border-y border-dm-brown/20">
-                                <div v-for="attr in ['天然植萃', '深層淨化', '舒緩頭皮', '溫和修護', '平衡油脂', '活化髮絲']" class="text-center">
-                                    <div class="w-12 h-12 mx-auto mb-3 flex items-center justify-center border border-dm-brown/40 rounded-full">
-                                        <div class="w-1.5 h-1.5 bg-dm-brown rotate-45"></div>
-                                    </div>
-                                    <span class="text-[12px] font-bold color-dm-brown leading-tight">{{ attr }}</span>
+                            <div class="mb-8">
+                                <h4 class="text-xs font-bold text-gray-400 uppercase tracking-tighter mb-4">核心成分調理</h4>
+                                <div class="flex flex-wrap gap-2">
+                                    <span v-for="tag in ['迷迭香', '尤加利', '薄荷', '檀香', '綠泥', '七葉樹果粉']" 
+                                          class="px-4 py-1.5 bg-gray-100 rounded-full text-xs font-medium text-gray-600">
+                                        {{ tag }}
+                                    </span>
                                 </div>
+                            </div>
+
+                            <div class="grid grid-cols-3 gap-4 mb-8 bg-gray-50 p-4 rounded-2xl">
+                                <div v-for="attr in ['抗氧化', '補充礦物質', '清涼', '吸附油脂', '淨化', '整合']" class="text-center">
+                                    <div class="w-8 h-8 mx-auto mb-1 bg-white rounded-full flex items-center justify-center shadow-sm">
+                                        <div class="w-2 h-2 bg-emerald-400 rounded-full"></div>
+                                    </div>
+                                    <span class="text-[10px] text-gray-500">{{ attr }}</span>
+                                </div>
+                            </div>
+
+                            <div class="bg-emerald-900 text-white p-6 rounded-2xl">
+                                <h4 class="text-sm font-bold mb-3 flex items-center">
+                                    <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path d="M13 10V3L4 14h7v7l9-11h-7z"></path></svg>
+                                    頭皮大掃除與養髮
+                                </h4>
+                                <p class="text-xs text-emerald-100 leading-loose">
+                                    每週一次，於洗髮前取適量均勻塗抹於頭皮，靜置10分鐘，讓泥膜吸附多餘油脂與老廢角質。
+                                </p>
                             </div>
                         </div>
                     </div>
@@ -91,34 +102,11 @@
     </div>
 
     <script>
-        const { createApp, ref, onMounted } = Vue;
+        const { createApp, ref } = Vue;
         createApp({
             setup() {
-                const products = ref([]);
                 const showDetail = ref(false);
-                const selectedProduct = ref(null);
-
-                // 解析 data.js 的資料
-                const loadData = async () => {
-                    try {
-                        const response = await fetch('data.js');
-                        const text = await response.text();
-                        // 這裡處理 data.js 內容，轉為 JSON 物件
-                        const jsonData = JSON.parse(text.replace('const products = ', '').replace(';', ''));
-                        products.value = jsonData;
-                    } catch (e) {
-                        console.error("資料載入失敗:", e);
-                    }
-                };
-
-                const openDetail = (item) => {
-                    selectedProduct.value = item;
-                    showDetail.value = true;
-                };
-
-                onMounted(loadData);
-
-                return { products, showDetail, selectedProduct, openDetail };
+                return { showDetail };
             }
         }).mount('#app');
     </script>
