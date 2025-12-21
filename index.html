@@ -10,10 +10,10 @@
         @import url('https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@400;700;900&display=swap');
         
         :root { 
-            --dm-bg: #F9F8F3;    /* 米色底 */
-            --dm-green: #1A3C34; /* 深綠色 */
-            --dm-gold: #D4AF37;  /* 金色 */
-            --dm-brown: #8C764D; /* 深棕色 */
+            --dm-bg: #F9F8F3;    
+            --dm-green: #1A3C34; 
+            --dm-gold: #D4AF37;  
+            --dm-brown: #8C764D; 
         }
 
         body { 
@@ -25,14 +25,12 @@
 
         [v-cloak] { display: none !important; }
 
-        /* 按鈕基礎樣式 */
         .btn-inactive { 
             background-color: #ffffff; 
             border: 1.5px solid #E5E1D8; 
             color: var(--dm-green) !important; 
         }
 
-        /* 選中狀態：強制白字深棕底 */
         .btn-active { 
             background-color: var(--dm-brown) !important; 
             color: #ffffff !important; 
@@ -40,7 +38,6 @@
             box-shadow: 0 4px 10px rgba(140, 118, 77, 0.3);
         }
 
-        /* 產品標題與價格 */
         .color-dm-green { color: var(--dm-green); }
         .color-dm-brown { color: var(--dm-brown); }
     </style>
@@ -117,11 +114,14 @@
 
     <script src="data.js"></script>
     <script>
+        // --- 第 112 行附近 ---
         let finalData = [];
         try {
             if (typeof products !== 'undefined') finalData = products;
             else if (typeof myVegData !== 'undefined') finalData = myVegData;
-        } catch (e) { console.error("資料讀取錯誤:", e); }
+        } catch (e) { 
+            console.error("資料讀取錯誤:", e); 
+        }
 
         const { createApp, ref, computed } = Vue;
         createApp({
@@ -130,27 +130,4 @@
                 const currentCat = ref('');
                 const currentSym = ref('');
 
-                const categories = computed(() => [...new Set(database.value.map(item => item.cat))]);
-                const symptomsOfCat = computed(() => {
-                    if (!currentCat.value) return [];
-                    return [...new Set(database.value.filter(i => i.cat === currentCat.value).map(i => i.sym))];
-                });
-                const filteredProducts = computed(() => {
-                    if (!currentSym.value) return [];
-                    return database.value.filter(i => i.sym === currentSym.value)
-                                   .sort((a, b) => (b.level || "").length - (a.level || "").length);
-                });
-
-                const selectCategory = (cat) => { currentCat.value = cat; currentSym.value = ''; };
-                const selectSymptom = (sym) => { currentSym.value = sym; };
-                const openPDF = (page) => {
-                    const p = String(page || "").trim();
-                    if (p && p !== "0") window.open(`catalog.pdf#page=${p.split('-')[0]}`, '_blank');
-                };
-
-                return { categories, currentCat, symptomsOfCat, currentSym, filteredProducts, selectCategory, selectSymptom, openPDF };
-            }
-        }).mount('#app');
-    </script>
-</body>
-</html>
+                const categories = computed
