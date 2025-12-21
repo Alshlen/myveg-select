@@ -6,41 +6,35 @@
     <title>MyVeg 智能養護選品</title>
     <script src="https://unpkg.com/vue@3/dist/vue.global.js"></script>
     <script src="https://cdn.tailwindcss.com"></script>
-   <style>
-    @import url('https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@400;700;900&display=swap');
-    
-    :root { 
-        --dm-bg: #F9F8F3;    /* 米色底 */
-        --dm-green: #1A3C34; /* 深綠色 */
-        --dm-gold: #D4AF37;  /* 金色 */
-        --dm-brown: #8C764D; /* 深棕色 */
-    }
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@400;700;900&display=swap');
+        
+        :root { 
+            --dm-bg: #F9F8F3;    /* 米色底 */
+            --dm-green: #1A3C34; /* 深綠色 */
+            --dm-gold: #D4AF37;  /* 金色 */
+            --dm-brown: #8C764D; /* 深棕色 */
+        }
 
-    body { font-family: 'Noto Sans TC', sans-serif; background-color: var(--dm-bg); color: #1a1a1a; }
-    [v-cloak] { display: none !important; }
+        body { font-family: 'Noto Sans TC', sans-serif; background-color: var(--dm-bg); color: #1a1a1a; }
+        [v-cloak] { display: none !important; }
 
-    /* 按鈕樣式微調 */
-    .btn-inactive { 
-        background-color: #ffffff; 
-        border: 1.5px solid #E5E1D8; /* 淺灰色邊框 */
-        color: var(--dm-green); 
-    }
+        /* 統一按鈕樣式 */
+        .btn-inactive { 
+            background-color: #ffffff; 
+            border: 1.5px solid #E5E1D8; 
+            color: var(--dm-green); /* 統一未選中為深綠字 */
+        }
 
-    /* 按下後的顏色：改為 DM 深棕色，讓色調更柔和高級 */
-    .btn-active { 
-        background-color: var(--dm-brown); 
-        color: #ffffff; 
-        border: 1.5px solid var(--dm-brown);
-        box-shadow: 0 4px 10px rgba(140, 118, 77, 0.3);
-    }
+        .btn-active { 
+            background-color: var(--dm-brown); 
+            color: #ffffff !important; /* 強制選中後為白字 */
+            border: 1.5px solid var(--dm-brown);
+            box-shadow: 0 4px 10px rgba(140, 118, 77, 0.3);
+        }
 
-    /* 產品名稱字體 */
-    .product-title {
-        color: var(--dm-green);
-        font-weight: 900;
-        line-height: 1.3;
-    }
-</style>
+        .product-title { color: var(--dm-green); font-weight: 900; }
+    </style>
 </head>
 <body class="py-8">
     <div id="app" v-cloak>
@@ -52,33 +46,34 @@
             <p class="text-sm font-bold text-[#8C764D] tracking-widest uppercase">Professional Plant-Based Care</p>
         </header>
 
-       <section class="max-w-4xl mx-auto px-4 mb-10">
-    <h2 class="text-sm font-bold text-gray-400 mb-5 flex items-center tracking-widest">
-        <span class="w-8 h-[1px] bg-gray-300 mr-3"></span> 01 選擇關心部位
-    </h2>
-    <div class="grid grid-cols-2 md:grid-cols-4 gap-3">
-        <button v-for="cat in categories" :key="cat" 
-            @click="selectCategory(cat)"
-            :class="['py-3 px-2 rounded-xl text-base font-bold transition-all duration-300', 
-            currentCat === cat ? 'btn-active' : 'btn-inactive hover:border-[#D4AF37]']">
-            {{ cat }}
-        </button>
-    </div>
+        <section class="max-w-4xl mx-auto px-4 mb-10">
+            <h2 class="text-sm font-bold text-gray-400 mb-5 flex items-center tracking-widest">
+                <span class="w-8 h-[1px] bg-gray-300 mr-3"></span> 01 選擇關心部位
+            </h2>
+            <div class="grid grid-cols-2 md:grid-cols-4 gap-3">
+                <button v-for="cat in categories" :key="cat" 
+                    @click="selectCategory(cat)"
+                    :class="['py-3 px-2 rounded-xl text-base font-bold transition-all duration-300', 
+                    currentCat === cat ? 'btn-active' : 'btn-inactive hover:border-[#D4AF37]']">
+                    {{ cat }}
+                </button>
+            </div>
         </section>
 
         <section v-if="currentCat" class="max-w-4xl mx-auto px-4 mb-10">
-    <h2 class="text-sm font-bold text-gray-400 mb-5 flex items-center tracking-widest">
-        <span class="w-8 h-[1px] bg-gray-300 mr-3"></span> 02 具體需求
-    </h2>
-    <div class="flex flex-wrap gap-3">
-        <button v-for="sym in symptomsOfCat" :key="sym" 
-            @click="selectSymptom(sym)"
-            :class="['py-2 px-6 rounded-full text-base font-bold transition-all duration-300 border', 
-            currentSym === sym ? 'btn-active' : 'bg-white text-gray-700 border-stone-200']">
-            {{ sym }}
-        </button>
-    </div>
-</section>
+            <h2 class="text-sm font-bold text-gray-400 mb-5 flex items-center tracking-widest">
+                <span class="w-8 h-[1px] bg-gray-300 mr-3"></span> 02 具體需求
+            </h2>
+            <div class="flex flex-wrap gap-3">
+                <button v-for="sym in symptomsOfCat" :key="sym" 
+                    @click="selectSymptom(sym)"
+                    :class="['py-2 px-6 rounded-full text-base font-bold transition-all duration-300', 
+                    currentSym === sym ? 'btn-active' : 'btn-inactive hover:border-[#D4AF37]']">
+                    {{ sym }}
+                </button>
+            </div>
+        </section>
+
         <section v-if="filteredProducts.length > 0" class="max-w-4xl mx-auto px-4 border-t border-gray-200 pt-10">
             <h2 class="text-lg font-black text-gray-400 mb-8 flex items-center">
                 <span class="w-8 h-[3px] bg-gray-300 mr-3"></span> 03 推薦方案
@@ -90,8 +85,8 @@
                     <div class="flex items-center">
                         <img :src="p.image" class="w-32 h-32 object-contain bg-[#F9F8F3] rounded-2xl p-2" @error="(e) => e.target.src='https://via.placeholder.com/150'">
                         <div class="ml-6">
-                            <h3 class="font-black text-2xl mb-2">{{ p.name }}</h3>
-                            <p class="text-emerald-900 font-black text-xl mb-3">NT$ {{ p.price }}</p>
+                            <h3 class="font-black text-2xl mb-2 text-[#1A3C34]">{{ p.name }}</h3>
+                            <p class="text-[#1A3C34] font-black text-xl mb-3">NT$ {{ p.price }}</p>
                             <p class="text-sm font-bold text-[#8C764D]">查看詳情介紹</p>
                         </div>
                     </div>
@@ -101,16 +96,12 @@
     </div>
 
     <script src="data.js"></script>
-
     <script>
-        // 診斷代碼：確保資料變數存在
         let finalData = [];
         try {
             if (typeof products !== 'undefined') finalData = products;
             else if (typeof myVegData !== 'undefined') finalData = myVegData;
-        } catch (e) {
-            console.error("資料解析失敗", e);
-        }
+        } catch (e) { console.error(e); }
 
         const { createApp, ref, computed } = Vue;
         createApp({
@@ -120,12 +111,10 @@
                 const currentSym = ref('');
 
                 const categories = computed(() => [...new Set(database.value.map(item => item.cat))]);
-                
                 const symptomsOfCat = computed(() => {
                     if (!currentCat.value) return [];
                     return [...new Set(database.value.filter(i => i.cat === currentCat.value).map(i => i.sym))];
                 });
-
                 const filteredProducts = computed(() => {
                     if (!currentSym.value) return [];
                     return database.value.filter(i => i.sym === currentSym.value)
@@ -138,7 +127,6 @@
                     const p = String(page || "").trim();
                     if (p && p !== "0") window.open(`catalog.pdf#page=${p.split('-')[0]}`, '_blank');
                 };
-
                 return { categories, currentCat, symptomsOfCat, currentSym, filteredProducts, selectCategory, selectSymptom, openPDF };
             }
         }).mount('#app');
