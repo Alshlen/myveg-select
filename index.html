@@ -67,18 +67,18 @@
         </section>
 
         <section v-if="currentCat" class="max-w-4xl mx-auto px-4 mb-10">
-            <h2 class="text-lg font-black text-gray-400 mb-5 flex items-center">
-                <span class="w-8 h-[3px] bg-gray-300 mr-3"></span> 02 具體需求
-            </h2>
-            <div class="flex flex-wrap gap-3">
-                <button v-for="sym in symptomsOfCat" :key="sym" 
-                    @click="selectSymptom(sym)"
-                    :class="['py-3 px-8 rounded-full text-lg font-bold transition-all border', currentSym === sym ? 'btn-active' : 'bg-white text-gray-700 border-gray-200']">
-                    {{ sym }}
-                </button>
-            </div>
-        </section>
-
+    <h2 class="text-sm font-bold text-gray-400 mb-5 flex items-center tracking-widest">
+        <span class="w-8 h-[1px] bg-gray-300 mr-3"></span> 02 具體需求
+    </h2>
+    <div class="flex flex-wrap gap-3">
+        <button v-for="sym in symptomsOfCat" :key="sym" 
+            @click="selectSymptom(sym)"
+            :class="['py-2 px-6 rounded-full text-base font-bold transition-all duration-300 border', 
+            currentSym === sym ? 'btn-active' : 'bg-white text-gray-700 border-stone-200']">
+            {{ sym }}
+        </button>
+    </div>
+</section>
         <section v-if="filteredProducts.length > 0" class="max-w-4xl mx-auto px-4 border-t border-gray-200 pt-10">
             <h2 class="text-lg font-black text-gray-400 mb-8 flex items-center">
                 <span class="w-8 h-[3px] bg-gray-300 mr-3"></span> 03 推薦方案
