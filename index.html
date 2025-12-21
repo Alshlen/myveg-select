@@ -10,7 +10,6 @@
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@400;500;700;900&display=swap');
         
-        /* DM 指定配色系統 */
         :root {
             --dm-bg: #F9F8F3;    /* 米色底 */
             --dm-green: #1A3C34; /* 深綠色 */
@@ -21,37 +20,39 @@
         body { 
             font-family: 'Noto Sans TC', sans-serif; 
             background-color: var(--dm-bg); 
-            color: #1a1a1a; /* 接近黑色的深灰，閱讀最舒適 */
+            color: #000000; /* 黑色字體 */
+            -webkit-font-smoothing: antialiased;
         }
 
-        /* 產品卡片視覺 */
-        .product-card { transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1); }
+        /* 標題加深 */
+        .color-dm-green { color: var(--dm-green); }
+        .color-dm-brown { color: var(--dm-brown); }
+
+        /* 按鈕設計 */
+        .btn-inactive { 
+            background-color: #ffffff; 
+            color: var(--dm-green); 
+            border: 1px solid var(--dm-gold); 
+        }
+        .btn-active { 
+            background-color: var(--dm-green); 
+            color: var(--dm-bg); 
+            box-shadow: 0 4px 12px rgba(26, 60, 52, 0.2);
+            border: 1px solid var(--dm-green);
+        }
+
+        /* 產品卡片 */
+        .product-card { transition: all 0.3s ease; background-color: #ffffff; }
         .vv-premium { 
             border: 2px solid var(--dm-gold); 
             box-shadow: 0 10px 20px rgba(212, 175, 55, 0.15); 
         }
         .v-standard { border: 1px solid #E5E1D8; }
         
-        /* 金色標籤 */
         .badge-vv { 
             background: linear-gradient(45deg, var(--dm-gold), #F9E27E); 
             color: var(--dm-green); 
         }
-
-        /* 按鈕視覺：深綠與米色切換 */
-        .btn-inactive { 
-            background-color: #ffffff; 
-            color: var(--dm-green); 
-            border: 1px solid #E5E1D8; 
-        }
-        .btn-active { 
-            background-color: var(--dm-green); 
-            color: var(--dm-bg); 
-            box-shadow: 0 4px 12px rgba(26, 60, 52, 0.2);
-        }
-
-        .color-dm-green { color: var(--dm-green); }
-        .color-dm-brown { color: var(--dm-brown); }
     </style>
 </head>
 <body class="py-8">
@@ -61,51 +62,59 @@
             <div class="flex justify-center mb-4">
                 <img src="Logo_MYVEG.jpg" alt="Logo" class="h-16 w-auto object-contain">
             </div>
-            <h1 class="text-3xl font-black color-dm-green mb-1 tracking-tight">智能養護建議</h1>
-            <p class="text-sm font-bold color-dm-brown tracking-[0.3em] uppercase">Professional Plant-Based Care</p>
+            <h1 class="text-4xl font-black color-dm-green mb-1">智能養護建議</h1>
+            <p class="text-base font-bold color-dm-brown tracking-[0.3em] uppercase">Professional Plant-Based Care</p>
         </header>
 
         <section class="mb-10">
-            <h2 class="text-base font-black text-gray-400 mb-5 flex items-center">
-                <span class="w-8 h-[2px] bg-gray-300 mr-3"></span> 01 選擇關心部位
+            <h2 class="text-lg font-black text-gray-500 mb-5 flex items-center">
+                <span class="w-8 h-[3px] bg-gray-300 mr-3"></span> 01 選擇關心部位
             </h2>
             <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
                 <button v-for="cat in categories" :key="cat" 
                     @click="selectCategory(cat)"
-                    :class="['py-4 px-2 rounded-2xl text-lg font-black transition-all', 
-                    currentCat === cat ? 'btn-active' : 'btn-inactive hover:border-emerald-800']">
+                    :class="['py-5 px-2 rounded-2xl text-xl font-black transition-all', 
+                    currentCat === cat ? 'btn-active' : 'btn-inactive']">
                     {{ cat }}
                 </button>
             </div>
         </section>
 
         <section v-if="currentCat" class="mb-10 animate__animated animate__fadeInUp">
-            <h2 class="text-base font-black text-gray-400 mb-5 flex items-center">
-                <span class="w-8 h-[2px] bg-gray-300 mr-3"></span> 02 具體需求
+            <h2 class="text-lg font-black text-gray-500 mb-5 flex items-center">
+                <span class="w-8 h-[3px] bg-gray-300 mr-3"></span> 02 具體需求
             </h2>
             <div class="flex flex-wrap gap-3">
                 <button v-for="sym in symptomsOfCat" :key="sym" 
                     @click="selectSymptom(sym)"
-                    :class="['py-3 px-6 rounded-full text-base font-bold transition-all border', 
-                    currentSym === sym ? 'btn-active border-emerald-900' : 'bg-white text-gray-600 border-gray-200']">
+                    :class="['py-3 px-8 rounded-full text-lg font-bold transition-all border', 
+                    currentSym === sym ? 'btn-active' : 'bg-white text-gray-700 border-gray-200']">
                     {{ sym }}
                 </button>
             </div>
         </section>
 
         <section v-if="filteredProducts.length > 0" class="animate__animated animate__fadeIn border-t border-gray-200 pt-10">
-            <div class="flex items-end justify-between mb-8">
-                <h2 class="text-base font-black text-gray-400 flex items-center">
-                    <span class="w-8 h-[2px] bg-gray-300 mr-3"></span> 03 推薦方案
-                </h2>
-                <span class="text-xs color-dm-brown font-bold italic">點擊產品開啟電子 DM</span>
-            </div>
+            <h2 class="text-lg font-black text-gray-500 mb-8 flex items-center">
+                <span class="w-8 h-[3px] bg-gray-300 mr-3"></span> 03 推薦方案
+            </h2>
 
-            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
                 <div v-for="p in filteredProducts" :key="p.name" 
                     @click="openPDF(p.pdfPage)"
-                    class="product-card bg-white rounded-[32px] overflow-hidden relative p-5"
-                    :class="[
-                        p.level === 'vv' ? 'vv-premium' : 'v-standard',
-                        (p.pdfPage && p.pdfPage !== '0') ? 'cursor-pointer hover:shadow-xl' : ''
-                    ]">
+                    class="product-card rounded-[32px] overflow-hidden relative p-6"
+                    :class="[p.level === 'vv' ? 'vv-premium' : 'v-standard', 'cursor-pointer shadow-sm hover:shadow-xl']">
+                    
+                    <div v-if="p.level === 'vv'" class="absolute top-4 right-4 badge-vv px-4 py-1 rounded-full text-xs font-black z-10 shadow-sm">
+                        ⭐ 極力推薦
+                    </div>
+
+                    <div class="flex items-center">
+                        <div class="w-32 h-32 flex-shrink-0 bg-[#F9F8F3] rounded-2xl overflow-hidden p-2">
+                            <img :src="p.image" class="w-full h-full object-contain">
+                        </div>
+                        <div class="ml-6 flex-grow">
+                            <h3 class="font-black text-black text-2xl mb-2 leading-tight">{{ p.name }}</h3>
+                            <p class="text-emerald-900 font-black text-xl mb-3">NT$ {{ p.price }}</p>
+                            <div v-if="p.pdfPage && p.pdfPage !== '0'" class="flex items-center text-sm font-bold color-dm-brown">
+                                查看詳情介紹
