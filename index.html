@@ -7,12 +7,52 @@
     <script src="https://unpkg.com/vue@3/dist/vue.global.js"></script>
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css" rel="stylesheet">
-    <style>
-        .product-card { transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1); }
-        .vv-premium { border: 2px solid #D4AF37; box-shadow: 0 10px 20px rgba(212, 175, 55, 0.1); }
-        .v-standard { border: 1px solid #e5e7eb; }
-        .badge-vv { background: linear-gradient(45deg, #D4AF37, #F9E27E); color: #5c441a; }
-    </style>
+   <style>
+    /* 全域背景：DM 米色底 */
+    body { 
+        background-color: #F9F8F3; 
+        font-family: 'Noto Sans TC', sans-serif;
+    }
+    
+    /* 標題與副標題顏色 */
+    .color-dm-green { color: #1A3C34; }
+    .color-dm-brown { color: #8C764D; }
+
+    /* 產品卡片調整 */
+    .product-card { 
+        transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        background-color: #ffffff;
+    }
+    
+    /* 極力推薦：金色系邊框與陰影 */
+    .vv-premium { 
+        border: 2px solid #D4AF37; 
+        box-shadow: 0 10px 25px rgba(212, 175, 55, 0.15); 
+    }
+    .v-standard { border: 1px solid #E5E1D8; }
+
+    /* 金色標籤 */
+    .badge-vv { 
+        background: linear-gradient(45deg, #D4AF37, #F9E27E); 
+        color: #1A3C34; 
+        font-weight: 900;
+    }
+
+    /* 按鈕顏色調整 */
+    .btn-inactive { 
+        background-color: #ffffff; 
+        color: #1A3C34; 
+        border: 1px solid #D4AF37; 
+    }
+    .btn-active { 
+        background-color: #1A3C34; 
+        color: #F9F8F3; 
+        box-shadow: 0 4px 12px rgba(26, 60, 52, 0.2);
+    }
+    
+    /* 字體加大優化 */
+    .text-base-plus { font-size: 1.1rem; }
+</style>
 </head>
 <body class="bg-gray-50 text-gray-800 font-sans">
     <div id="app" class="max-w-4xl mx-auto px-4 py-8">
@@ -32,8 +72,8 @@
             <div class="grid grid-cols-2 md:grid-cols-4 gap-3">
                 <button v-for="cat in categories" :key="cat" 
                     @click="selectCategory(cat)"
-                    :class="['py-3 px-2 rounded-xl text-sm font-medium transition-all', 
-                    currentCat === cat ? 'bg-emerald-700 text-white shadow-md' : 'bg-white text-emerald-800 border border-emerald-100 hover:bg-emerald-50']">
+                   :class="['py-3 px-2 rounded-xl text-sm font-bold transition-all', 
+                    currentCat === cat ? 'btn-active' : 'btn-inactive hover:bg-stone-50']">
                     {{ cat }}
                 </button>
             </div>
@@ -46,8 +86,8 @@
             <div class="flex flex-wrap gap-2">
                 <button v-for="sym in symptomsOfCat" :key="sym" 
                     @click="selectSymptom(sym)"
-                    :class="['py-2 px-5 rounded-full text-xs transition-all border', 
-                    currentSym === sym ? 'bg-emerald-900 text-white border-emerald-900' : 'bg-white text-gray-600 border-gray-200 hover:border-emerald-300']">
+                    :class="['py-2 px-5 rounded-full text-xs font-bold transition-all border', 
+currentSym === sym ? 'btn-active border-emerald-900' : 'bg-white text-stone-600 border-stone-200']">
                     {{ sym }}
                 </button>
             </div>
@@ -80,7 +120,7 @@
                             <div v-else class="w-full h-full flex items-center justify-center text-gray-300 text-[10px] text-center p-2">IMAGE</div>
                         </div>
                         <div class="ml-4 flex-grow flex flex-col justify-center">
-                            <h3 class="font-bold text-gray-900 text-base mb-1">{{ p.name }}</h3>
+                            <h3 class="font-black text-xl color-dm-green mb-1">{{ p.name }}</h3>
                             <p class="text-emerald-700 font-bold text-sm mb-2">NT$ {{ p.price }}</p>
                             
                             <div v-if="p.pdfPage && p.pdfPage !== '0' && p.pdfPage !== ''" class="flex items-center text-[10px] text-emerald-600 font-medium">
