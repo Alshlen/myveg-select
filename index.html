@@ -6,14 +6,41 @@
     <title>MyVeg 智能養護選品</title>
     <script src="https://unpkg.com/vue@3/dist/vue.global.js"></script>
     <script src="https://cdn.tailwindcss.com"></script>
-    <style>
-        @import url('https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@400;700;900&display=swap');
-        :root { --dm-bg: #F9F8F3; --dm-green: #1A3C34; --dm-gold: #D4AF37; }
-        body { font-family: 'Noto Sans TC', sans-serif; background-color: var(--dm-bg); color: #000; }
-        [v-cloak] { display: none !important; } /* 核心：防止顯示 {{ }} */
-        .btn-active { background-color: var(--dm-green); color: var(--dm-bg); border: 1px solid var(--dm-green); }
-        .btn-inactive { background-color: #fff; border: 1px solid var(--dm-gold); color: var(--dm-green); }
-    </style>
+   <style>
+    @import url('https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@400;700;900&display=swap');
+    
+    :root { 
+        --dm-bg: #F9F8F3;    /* 米色底 */
+        --dm-green: #1A3C34; /* 深綠色 */
+        --dm-gold: #D4AF37;  /* 金色 */
+        --dm-brown: #8C764D; /* 深棕色 */
+    }
+
+    body { font-family: 'Noto Sans TC', sans-serif; background-color: var(--dm-bg); color: #1a1a1a; }
+    [v-cloak] { display: none !important; }
+
+    /* 按鈕樣式微調 */
+    .btn-inactive { 
+        background-color: #ffffff; 
+        border: 1.5px solid #E5E1D8; /* 淺灰色邊框 */
+        color: var(--dm-green); 
+    }
+
+    /* 按下後的顏色：改為 DM 深棕色，讓色調更柔和高級 */
+    .btn-active { 
+        background-color: var(--dm-brown); 
+        color: #ffffff; 
+        border: 1.5px solid var(--dm-brown);
+        box-shadow: 0 4px 10px rgba(140, 118, 77, 0.3);
+    }
+
+    /* 產品名稱字體 */
+    .product-title {
+        color: var(--dm-green);
+        font-weight: 900;
+        line-height: 1.3;
+    }
+</style>
 </head>
 <body class="py-8">
     <div id="app" v-cloak>
@@ -25,17 +52,18 @@
             <p class="text-sm font-bold text-[#8C764D] tracking-widest uppercase">Professional Plant-Based Care</p>
         </header>
 
-        <section class="max-w-4xl mx-auto px-4 mb-10">
-            <h2 class="text-lg font-black text-gray-400 mb-5 flex items-center">
-                <span class="w-8 h-[3px] bg-gray-300 mr-3"></span> 01 選擇關心部位
-            </h2>
-            <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
-                <button v-for="cat in categories" :key="cat" 
-                    @click="selectCategory(cat)"
-                    :class="['py-4 px-2 rounded-2xl text-xl font-black transition-all', currentCat === cat ? 'btn-active' : 'btn-inactive']">
-                    {{ cat }}
-                </button>
-            </div>
+       <section class="max-w-4xl mx-auto px-4 mb-10">
+    <h2 class="text-sm font-bold text-gray-400 mb-5 flex items-center tracking-widest">
+        <span class="w-8 h-[1px] bg-gray-300 mr-3"></span> 01 選擇關心部位
+    </h2>
+    <div class="grid grid-cols-2 md:grid-cols-4 gap-3">
+        <button v-for="cat in categories" :key="cat" 
+            @click="selectCategory(cat)"
+            :class="['py-3 px-2 rounded-xl text-base font-bold transition-all duration-300', 
+            currentCat === cat ? 'btn-active' : 'btn-inactive hover:border-[#D4AF37]']">
+            {{ cat }}
+        </button>
+    </div>
         </section>
 
         <section v-if="currentCat" class="max-w-4xl mx-auto px-4 mb-10">
