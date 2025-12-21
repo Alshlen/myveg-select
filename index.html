@@ -77,8 +77,41 @@
 
     <script src="data.js"></script>
     <script>
+        // --- 補齊缺失的啟動邏輯 (第 112 行之後) ---
         let finalData = [];
         try {
             if (typeof products !== 'undefined') finalData = products;
             else if (typeof myVegData !== 'undefined') finalData = myVegData;
-        } catch (e) { console.error(e); }
+        } catch (e) { console.error("資料讀取錯誤:", e); }
+
+        const { createApp, ref, computed } = Vue;
+        createApp({
+            setup() {
+                const database = ref(finalData);
+                const currentCat = ref('');
+                const currentSym = ref('');
+
+                const categories = computed(() => [...new Set(database.value.map(item => item.cat))]);
+                const symptomsOfCat = computed(() => {
+                    if (!currentCat.value) return [];
+                    return [...new Set(database.value.filter(i => i.cat === currentCat.value).map(i => i.sym))];
+                });
+                const filteredProducts = computed(() => {
+                    if (!currentSym.value) return [];
+                    return database.value.filter(i => i.sym === currentSym.value)
+                                   .sort((a, b) => (b.level || "").length - (a.level || "").length);
+                });
+
+                const selectCategory = (cat) => { currentCat.value = cat; currentSym.value = ''; };
+                const selectSymptom = (sym) => { currentSym.value = sym; };
+                const openPDF = (page) => {
+                    const p = String(page || "").trim();
+                    if (p && p !== "0") window.open(`catalog.pdf#page=${p.split('-')[0]}`, '_blank');
+                };
+
+                return { categories, currentCat, symptomsOfCat, currentSym, filteredProducts, selectCategory, selectSymptom, openPDF };
+            }
+        }).mount('#app');
+    </script>
+</body>
+</html>
