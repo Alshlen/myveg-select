@@ -8,86 +8,65 @@
     <script src="https://cdn.tailwindcss.com"></script>
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@400;700;900&display=swap');
-        
-        :root { 
-            --dm-bg: #F9F8F3;    /* 米色底 */
-            --dm-green: #1A3C34; /* 深綠色 */
-            --dm-gold: #D4AF37;  /* 金色 */
-            --dm-brown: #8C764D; /* 深棕色 */
-        }
-
+        :root { --dm-bg: #F9F8F3; --dm-green: #1A3C34; --dm-gold: #D4AF37; --dm-brown: #8C764D; }
         body { font-family: 'Noto Sans TC', sans-serif; background-color: var(--dm-bg); color: #1a1a1a; }
         [v-cloak] { display: none !important; }
-
-        /* 統一按鈕樣式 */
-        .btn-inactive { 
-            background-color: #ffffff; 
-            border: 1.5px solid #E5E1D8; 
-            color: var(--dm-green); /* 統一未選中為深綠字 */
-        }
-
-        .btn-active { 
-            background-color: var(--dm-brown); 
-            color: #ffffff !important; /* 強制選中後為白字 */
-            border: 1.5px solid var(--dm-brown);
-            box-shadow: 0 4px 10px rgba(140, 118, 77, 0.3);
-        }
-
-        .product-title { color: var(--dm-green); font-weight: 900; }
+        .btn-inactive { background-color: #ffffff; border: 1.5px solid #E5E1D8; color: var(--dm-green) !important; }
+        .btn-active { background-color: var(--dm-brown) !important; color: #ffffff !important; border: 1.5px solid var(--dm-brown) !important; box-shadow: 0 4px 10px rgba(140, 118, 77, 0.3); }
     </style>
 </head>
-<body class="py-8">
+<body class="py-6 md:py-8">
     <div id="app" v-cloak>
-        <header class="text-center mb-12">
-            <div class="flex justify-center mb-4">
-                <img src="Logo_MYVEG.jpg" alt="Logo" class="h-16 w-auto object-contain">
+        <header class="text-center mb-8 md:mb-12">
+            <div class="flex justify-center mb-3">
+                <img src="Logo_MYVEG.jpg" alt="Logo" class="h-12 md:h-16 w-auto object-contain">
             </div>
-            <h1 class="text-3xl font-black text-[#1A3C34]">智能養護建議</h1>
-            <p class="text-sm font-bold text-[#8C764D] tracking-widest uppercase">Professional Plant-Based Care</p>
+            <h1 class="text-2xl md:text-3xl font-black text-[#1A3C34]">智能養護建議</h1>
+            <p class="text-[10px] md:text-sm font-bold text-[#8C764D] tracking-widest uppercase">Professional Plant-Based Care</p>
         </header>
 
-        <section class="max-w-4xl mx-auto px-4 mb-10">
-            <h2 class="text-sm font-bold text-gray-400 mb-5 flex items-center tracking-widest">
-                <span class="w-8 h-[1px] bg-gray-300 mr-3"></span> 01 選擇關心部位
+        <section class="max-w-4xl mx-auto px-4 mb-8">
+            <h2 class="text-[12px] md:text-sm font-bold text-gray-400 mb-4 flex items-center tracking-widest">
+                <span class="w-6 h-[1px] bg-gray-300 mr-2"></span> 01 選擇關心部位
             </h2>
-            <div class="grid grid-cols-2 md:grid-cols-4 gap-3">
+            <div class="grid grid-cols-2 md:grid-cols-4 gap-2 md:gap-3">
                 <button v-for="cat in categories" :key="cat" 
                     @click="selectCategory(cat)"
-                    :class="['py-3 px-2 rounded-xl text-base font-bold transition-all duration-300', 
-                    currentCat === cat ? 'btn-active' : 'btn-inactive hover:border-[#D4AF37]']">
+                    :class="['py-2.5 md:py-3 px-2 rounded-xl text-sm md:text-base font-bold transition-all duration-300', 
+                    currentCat === cat ? 'btn-active' : 'btn-inactive']">
                     {{ cat }}
                 </button>
             </div>
         </section>
 
-        <section v-if="currentCat" class="max-w-4xl mx-auto px-4 mb-10">
-            <h2 class="text-sm font-bold text-gray-400 mb-5 flex items-center tracking-widest">
-                <span class="w-8 h-[1px] bg-gray-300 mr-3"></span> 02 具體需求
+        <section v-if="currentCat" class="max-w-4xl mx-auto px-4 mb-8">
+            <h2 class="text-[12px] md:text-sm font-bold text-gray-400 mb-4 flex items-center tracking-widest">
+                <span class="w-6 h-[1px] bg-gray-300 mr-2"></span> 02 具體需求
             </h2>
-            <div class="flex flex-wrap gap-3">
+            <div class="flex flex-wrap gap-2">
                 <button v-for="sym in symptomsOfCat" :key="sym" 
                     @click="selectSymptom(sym)"
-                    :class="['py-2 px-6 rounded-full text-base font-bold transition-all duration-300', 
-                    currentSym === sym ? 'btn-active' : 'btn-inactive hover:border-[#D4AF37]']">
+                    :class="['py-1.5 px-4 md:py-2 md:px-6 rounded-full text-xs md:text-base font-bold transition-all duration-300', 
+                    currentSym === sym ? 'btn-active' : 'btn-inactive']">
                     {{ sym }}
                 </button>
             </div>
         </section>
 
-        <section v-if="filteredProducts.length > 0" class="max-w-4xl mx-auto px-4 border-t border-gray-200 pt-10">
-            <h2 class="text-lg font-black text-gray-400 mb-8 flex items-center">
-                <span class="w-8 h-[3px] bg-gray-300 mr-3"></span> 03 推薦方案
+        <section v-if="filteredProducts.length > 0" class="max-w-4xl mx-auto px-4 border-t border-gray-200 pt-8">
+            <h2 class="text-[12px] md:text-lg font-black text-gray-400 mb-6 flex items-center">
+                <span class="w-6 h-[2px] bg-gray-300 mr-2"></span> 03 推薦方案
             </h2>
-            <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-4 md:gap-8">
                 <div v-for="p in filteredProducts" :key="p.name" @click="openPDF(p.pdfPage)"
-                    class="bg-white rounded-[32px] p-6 cursor-pointer border border-[#E5E1D8] shadow-sm hover:shadow-xl transition-all relative">
-                    <div v-if="p.level === 'vv'" class="absolute top-4 right-4 bg-gradient-to-r from-[#D4AF37] to-[#F9E27E] px-4 py-1 rounded-full text-xs font-black shadow-sm">⭐ 極力推薦</div>
+                    class="bg-white rounded-2xl md:rounded-[32px] p-4 md:p-6 cursor-pointer border border-[#E5E1D8] shadow-sm hover:shadow-xl transition-all relative">
+                    <div v-if="p.level === 'vv'" class="absolute top-3 right-3 bg-gradient-to-r from-[#D4AF37] to-[#F9E27E] px-3 py-0.5 rounded-full text-[10px] md:text-xs font-black shadow-sm">⭐ 極力推薦</div>
                     <div class="flex items-center">
-                        <img :src="p.image" class="w-32 h-32 object-contain bg-[#F9F8F3] rounded-2xl p-2" @error="(e) => e.target.src='https://via.placeholder.com/150'">
-                        <div class="ml-6">
-                            <h3 class="font-black text-2xl mb-2 text-[#1A3C34]">{{ p.name }}</h3>
-                            <p class="text-[#1A3C34] font-black text-xl mb-3">NT$ {{ p.price }}</p>
-                            <p class="text-sm font-bold text-[#8C764D]">查看詳情介紹</p>
+                        <img :src="p.image" class="w-20 h-20 md:w-32 md:h-32 object-contain bg-[#F9F8F3] rounded-xl md:rounded-2xl p-1 md:p-2" @error="(e) => e.target.src='https://via.placeholder.com/150'">
+                        <div class="ml-4 md:ml-6">
+                            <h3 class="font-black text-lg md:text-2xl mb-1 text-[#1A3C34] leading-tight">{{ p.name }}</h3>
+                            <p class="text-[#1A3C34] font-black text-base md:text-xl mb-1.5">NT$ {{ p.price }}</p>
+                            <p class="text-[10px] md:text-sm font-bold text-[#8C764D]">查看詳情介紹</p>
                         </div>
                     </div>
                 </div>
@@ -109,7 +88,6 @@
                 const database = ref(finalData);
                 const currentCat = ref('');
                 const currentSym = ref('');
-
                 const categories = computed(() => [...new Set(database.value.map(item => item.cat))]);
                 const symptomsOfCat = computed(() => {
                     if (!currentCat.value) return [];
@@ -117,10 +95,8 @@
                 });
                 const filteredProducts = computed(() => {
                     if (!currentSym.value) return [];
-                    return database.value.filter(i => i.sym === currentSym.value)
-                                   .sort((a, b) => (b.level || "").length - (a.level || "").length);
+                    return database.value.filter(i => i.sym === currentSym.value).sort((a, b) => (b.level || "").length - (a.level || "").length);
                 });
-
                 const selectCategory = (cat) => { currentCat.value = cat; currentSym.value = ''; };
                 const selectSymptom = (sym) => { currentSym.value = sym; };
                 const openPDF = (page) => {
