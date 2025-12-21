@@ -4,20 +4,19 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>MyVeg 智能養護選品</title>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/vue/3.3.4/vue.global.prod.min.js"></script>
+    <script src="https://unpkg.com/vue@3/dist/vue.global.js"></script>
     <script src="https://cdn.tailwindcss.com"></script>
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@400;700;900&display=swap');
         :root { --dm-bg: #F9F8F3; --dm-green: #1A3C34; --dm-gold: #D4AF37; }
         body { font-family: 'Noto Sans TC', sans-serif; background-color: var(--dm-bg); color: #000; }
-        [v-cloak] { display: none; } /* 防止顯示大括號 */
-        .btn-active { background-color: var(--dm-green); color: var(--dm-bg); }
+        [v-cloak] { display: none !important; } /* 核心：防止顯示 {{ }} */
+        .btn-active { background-color: var(--dm-green); color: var(--dm-bg); border: 1px solid var(--dm-green); }
         .btn-inactive { background-color: #fff; border: 1px solid var(--dm-gold); color: var(--dm-green); }
     </style>
 </head>
 <body class="py-8">
-    <div id="app" v-cloak class="max-w-4xl mx-auto px-4">
-        
+    <div id="app" v-cloak>
         <header class="text-center mb-12">
             <div class="flex justify-center mb-4">
                 <img src="Logo_MYVEG.jpg" alt="Logo" class="h-16 w-auto object-contain">
@@ -26,7 +25,7 @@
             <p class="text-sm font-bold text-[#8C764D] tracking-widest uppercase">Professional Plant-Based Care</p>
         </header>
 
-        <section class="mb-10">
+        <section class="max-w-4xl mx-auto px-4 mb-10">
             <h2 class="text-lg font-black text-gray-400 mb-5 flex items-center">
                 <span class="w-8 h-[3px] bg-gray-300 mr-3"></span> 01 選擇關心部位
             </h2>
@@ -39,7 +38,7 @@
             </div>
         </section>
 
-        <section v-if="currentCat" class="mb-10">
+        <section v-if="currentCat" class="max-w-4xl mx-auto px-4 mb-10">
             <h2 class="text-lg font-black text-gray-400 mb-5 flex items-center">
                 <span class="w-8 h-[3px] bg-gray-300 mr-3"></span> 02 具體需求
             </h2>
@@ -52,7 +51,7 @@
             </div>
         </section>
 
-        <section v-if="filteredProducts.length > 0" class="border-t border-gray-200 pt-10">
+        <section v-if="filteredProducts.length > 0" class="max-w-4xl mx-auto px-4 border-t border-gray-200 pt-10">
             <h2 class="text-lg font-black text-gray-400 mb-8 flex items-center">
                 <span class="w-8 h-[3px] bg-gray-300 mr-3"></span> 03 推薦方案
             </h2>
@@ -61,7 +60,7 @@
                     class="bg-white rounded-[32px] p-6 cursor-pointer border border-[#E5E1D8] shadow-sm hover:shadow-xl transition-all relative">
                     <div v-if="p.level === 'vv'" class="absolute top-4 right-4 bg-gradient-to-r from-[#D4AF37] to-[#F9E27E] px-4 py-1 rounded-full text-xs font-black shadow-sm">⭐ 極力推薦</div>
                     <div class="flex items-center">
-                        <img :src="p.image" class="w-32 h-32 object-contain bg-[#F9F8F3] rounded-2xl p-2">
+                        <img :src="p.image" class="w-32 h-32 object-contain bg-[#F9F8F3] rounded-2xl p-2" @error="(e) => e.target.src='https://via.placeholder.com/150'">
                         <div class="ml-6">
                             <h3 class="font-black text-2xl mb-2">{{ p.name }}</h3>
                             <p class="text-emerald-900 font-black text-xl mb-3">NT$ {{ p.price }}</p>
@@ -71,32 +70,38 @@
                 </div>
             </div>
         </section>
-
-        <footer class="mt-24 text-center text-xs text-[#8C764D] font-bold pb-10">
-            © MYVEG PROFESSIONAL ALL RIGHTS RESERVED.
-        </footer>
     </div>
 
     <script src="data.js"></script>
-    <script>
-        const { createApp, ref, computed } = Vue;
-        const app = createApp({
-            setup() {
-                // 自動相容所有標籤名稱
-                const database = (typeof products !== 'undefined') ? products : 
-                                 (typeof myVegData !== 'undefined') ? myVegData : [];
 
+    <script>
+        // 診斷代碼：確保資料變數存在
+        let finalData = [];
+        try {
+            if (typeof products !== 'undefined') finalData = products;
+            else if (typeof myVegData !== 'undefined') finalData = myVegData;
+        } catch (e) {
+            console.error("資料解析失敗", e);
+        }
+
+        const { createApp, ref, computed } = Vue;
+        createApp({
+            setup() {
+                const database = ref(finalData);
                 const currentCat = ref('');
                 const currentSym = ref('');
 
-                const categories = [...new Set(database.map(item => item.cat))];
+                const categories = computed(() => [...new Set(database.value.map(item => item.cat))]);
+                
                 const symptomsOfCat = computed(() => {
                     if (!currentCat.value) return [];
-                    return [...new Set(database.filter(i => i.cat === currentCat.value).map(i => i.sym))];
+                    return [...new Set(database.value.filter(i => i.cat === currentCat.value).map(i => i.sym))];
                 });
+
                 const filteredProducts = computed(() => {
                     if (!currentSym.value) return [];
-                    return database.filter(i => i.sym === currentSym.value).sort((a, b) => b.level.length - a.level.length);
+                    return database.value.filter(i => i.sym === currentSym.value)
+                                   .sort((a, b) => (b.level || "").length - (a.level || "").length);
                 });
 
                 const selectCategory = (cat) => { currentCat.value = cat; currentSym.value = ''; };
@@ -108,12 +113,7 @@
 
                 return { categories, currentCat, symptomsOfCat, currentSym, filteredProducts, selectCategory, selectSymptom, openPDF };
             }
-        });
-        
-        // 確保 DOM 載入後才掛載
-        window.addEventListener('DOMContentLoaded', () => {
-            app.mount('#app');
-        });
+        }).mount('#app');
     </script>
 </body>
 </html>
