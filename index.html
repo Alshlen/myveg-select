@@ -3,112 +3,82 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>MyVeg 智能養護選品</title>
+    <title>Vitale Cosmetics 智能養護</title>
     <script src="https://unpkg.com/vue@3/dist/vue.global.js"></script>
     <script src="https://cdn.tailwindcss.com"></script>
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@400;700;900&display=swap');
-        :root { --dm-bg: #F9F8F3; --dm-green: #1A3C34; --dm-gold: #D4AF37; --dm-brown: #8C764D; }
-        body { font-family: 'Noto Sans TC', sans-serif; background-color: var(--dm-bg); color: #1a1a1a; -webkit-font-smoothing: antialiased; }
+        :root { 
+            --dm-bg: #F9F8F3; 
+            --dm-black: #000000; /* 已修正：深綠改為純黑 */
+            --dm-gold: #D4AF37; 
+            --dm-brown: #8C764D; 
+        }
+        body { font-family: 'Noto Sans TC', sans-serif; background-color: var(--dm-bg); color: var(--dm-black); -webkit-font-smoothing: antialiased; }
         [v-cloak] { display: none !important; }
-        .btn-inactive { background-color: #ffffff; border: 1.5px solid #E5E1D8; color: var(--dm-green) !important; }
+        .btn-inactive { background-color: #ffffff; border: 1.5px solid #E5E1D8; color: var(--dm-black) !important; }
         .btn-active { background-color: var(--dm-brown) !important; color: #ffffff !important; border: 1.5px solid var(--dm-brown) !important; box-shadow: 0 4px 10px rgba(140, 118, 77, 0.3); }
     </style>
 </head>
 <body class="py-6 md:py-10">
     <div id="app" v-cloak>
         <header class="text-center mb-8 md:mb-16">
-            <div class="flex justify-center mb-4">
-                <img src="Logo_MYVEG.jpg" alt="Logo" class="h-14 md:h-20 w-auto object-contain">
-            </div>
-            <h1 class="text-2xl md:text-4xl font-black text-[#1A3C34] tracking-tight">智能養護建議</h1>
+            <div class="flex justify-center mb-4"><img src="Logo_MYVEG.jpg" alt="Logo" class="h-14 md:h-20 w-auto object-contain"></div>
+            <h1 class="text-2xl md:text-4xl font-black text-black tracking-tight">智能養護建議</h1>
             <p class="text-[10px] md:text-sm font-bold text-[#8C764D] tracking-[0.2em] uppercase mt-1">Vitale Cosmetics | Experience</p>
         </header>
 
         <section class="max-w-4xl mx-auto px-4 mb-10">
-            <h2 class="text-xs md:text-sm font-bold text-gray-400 mb-5 flex items-center tracking-widest uppercase">
-                <span class="w-8 h-[1px] bg-gray-300 mr-3"></span> 01 選擇關心部位
-            </h2>
+            <h2 class="text-xs md:text-sm font-bold text-gray-400 mb-5 flex items-center tracking-widest uppercase"><span class="w-8 h-[1px] bg-gray-300 mr-3"></span> 01 選擇關心部位</h2>
             <div class="grid grid-cols-2 md:grid-cols-4 gap-3">
                 <button v-for="cat in categories" :key="cat" @click="selectCategory(cat)"
-                    :class="['py-3 md:py-4 px-2 rounded-2xl text-base md:text-lg font-bold transition-all duration-300', currentCat === cat ? 'btn-active' : 'btn-inactive hover:border-[#D4AF37]']">
-                    {{ cat }}
-                </button>
+                    :class="['py-3 md:py-4 px-2 rounded-2xl text-base md:text-lg font-bold transition-all duration-300', currentCat === cat ? 'btn-active' : 'btn-inactive hover:border-[#D4AF37]']">{{ cat }}</button>
             </div>
         </section>
 
         <section v-if="currentCat" class="max-w-4xl mx-auto px-4 mb-10">
-            <h2 class="text-xs md:text-sm font-bold text-gray-400 mb-5 flex items-center tracking-widest uppercase">
-                <span class="w-8 h-[1px] bg-gray-300 mr-3"></span> 02 具體需求
-            </h2>
+            <h2 class="text-xs md:text-sm font-bold text-gray-400 mb-5 flex items-center tracking-widest uppercase"><span class="w-8 h-[1px] bg-gray-300 mr-3"></span> 02 具體需求</h2>
             <div class="flex flex-wrap gap-2.5">
                 <button v-for="sym in symptomsOfCat" :key="sym" @click="selectSymptom(sym)"
-                    :class="['py-2 px-5 md:py-2.5 md:px-8 rounded-full text-sm md:text-base font-bold transition-all duration-300', currentSym === sym ? 'btn-active' : 'btn-inactive hover:border-[#D4AF37]']">
-                    {{ sym }}
-                </button>
+                    :class="['py-2 px-5 md:py-2.5 md:px-8 rounded-full text-sm md:text-base font-bold transition-all duration-300', currentSym === sym ? 'btn-active' : 'btn-inactive hover:border-[#D4AF37]']">{{ sym }}</button>
             </div>
         </section>
 
         <section v-if="filteredProducts.length > 0" class="max-w-4xl mx-auto px-4 border-t border-stone-200 pt-10 mb-20">
             <div class="flex items-end justify-between mb-8">
-                <h2 class="text-xs md:text-sm font-bold text-gray-400 flex items-center tracking-widest uppercase">
-                    <span class="w-8 h-[1px] bg-gray-300 mr-3"></span> 03 推薦方案
-                </h2>
+                <h2 class="text-xs md:text-sm font-bold text-gray-400 flex items-center tracking-widest uppercase"><span class="w-8 h-[1px] bg-gray-300 mr-3"></span> 03 推薦方案</h2>
                 <span class="text-[10px] md:text-xs text-[#8C764D] font-bold italic">點擊開啟電子DM</span>
             </div>
-            <div class="grid grid-cols-2 md:grid-cols-2 gap-4 md:gap-10">
+            <div class="grid grid-cols-2 gap-4 md:gap-10">
                 <div v-for="p in filteredProducts" :key="p.name" @click="openPDF(p.pdfPage)"
                     class="bg-white rounded-2xl md:rounded-[40px] p-4 md:p-8 cursor-pointer border border-[#E5E1D8] shadow-sm hover:shadow-xl transition-all relative flex flex-col items-center">
                     <div v-if="p.level === 'vv'" class="absolute top-2 right-2 md:top-5 md:right-5 bg-gradient-to-r from-[#D4AF37] to-[#F9E27E] px-2.5 py-0.5 md:px-4 md:py-1 rounded-full text-[9px] md:text-xs font-black shadow-sm z-10">⭐ 推薦</div>
-                    <div class="w-full aspect-square bg-[#F9F8F3] rounded-xl md:rounded-3xl overflow-hidden mb-4 p-2 flex items-center justify-center">
-                        <img :src="p.image" class="w-full h-full object-contain" @error="(e) => e.target.src='https://via.placeholder.com/200'">
-                    </div>
+                    <div class="w-full aspect-square bg-[#F9F8F3] rounded-xl md:rounded-3xl overflow-hidden mb-4 p-2 flex items-center justify-center"><img :src="p.image" class="w-full h-full object-contain" @error="(e) => e.target.src='https://via.placeholder.com/200'"></div>
                     <div class="w-full text-center">
-                        <h3 class="font-black text-base md:text-2xl mb-1 text-[#1A3C34] leading-tight min-h-[2.5rem] flex items-center justify-center">{{ p.name }}</h3>
-                        <p class="text-[#1A3C34] font-black text-sm md:text-xl mb-3">NT$ {{ p.price }}</p>
+                        <h3 class="font-black text-base md:text-2xl mb-1 text-black leading-tight min-h-[2.5rem] flex items-center justify-center">{{ p.name }}</h3>
+                        <p class="text-black font-black text-sm md:text-xl mb-3">NT$ {{ p.price }}</p>
                         <div class="text-[11px] md:text-sm font-bold text-[#8C764D] pt-2 border-t border-stone-100 w-full">查看詳情介紹</div>
                     </div>
                 </div>
             </div>
         </section>
-
         <footer class="mt-10 text-center text-[10px] md:text-xs text-[#8C764D] font-bold pb-10 tracking-[0.2em]">© VITALE COSMETICS ALL RIGHTS RESERVED.</footer>
     </div>
-
     <script src="data.js"></script>
     <script>
-        // --- 補齊缺失的啟動邏輯 (第 112 行之後) ---
         let finalData = [];
-        try {
-            if (typeof products !== 'undefined') finalData = products;
-            else if (typeof myVegData !== 'undefined') finalData = myVegData;
-        } catch (e) { console.error("資料讀取錯誤:", e); }
-
+        try { if (typeof products !== 'undefined') finalData = products; else if (typeof myVegData !== 'undefined') finalData = myVegData; } catch (e) { console.error(e); }
         const { createApp, ref, computed } = Vue;
         createApp({
             setup() {
                 const database = ref(finalData);
-                const currentCat = ref('');
-                const currentSym = ref('');
-
-                const categories = computed(() => [...new Set(database.value.map(item => item.cat))]);
-                const symptomsOfCat = computed(() => {
-                    if (!currentCat.value) return [];
-                    return [...new Set(database.value.filter(i => i.cat === currentCat.value).map(i => i.sym))];
-                });
-                const filteredProducts = computed(() => {
-                    if (!currentSym.value) return [];
-                    return database.value.filter(i => i.sym === currentSym.value)
-                                   .sort((a, b) => (b.level || "").length - (a.level || "").length);
-                });
-
+                const currentCat = ref(''); const currentSym = ref('');
+                const categories = computed(() => [...new Set(database.value.map(i => i.cat))]);
+                const symptomsOfCat = computed(() => !currentCat.value ? [] : [...new Set(database.value.filter(i => i.cat === currentCat.value).map(i => i.sym))]);
+                const filteredProducts = computed(() => !currentSym.value ? [] : database.value.filter(i => i.sym === currentSym.value).sort((a, b) => (b.level || "").length - (a.level || "").length));
                 const selectCategory = (cat) => { currentCat.value = cat; currentSym.value = ''; };
                 const selectSymptom = (sym) => { currentSym.value = sym; };
-                const openPDF = (page) => {
-                    const p = String(page || "").trim();
-                    if (p && p !== "0") window.open(`catalog.pdf#page=${p.split('-')[0]}`, '_blank');
-                };
-
+                const openPDF = (p) => { const page = String(p || "").trim(); if (page && page !== "0") window.open(`catalog.pdf#page=${page.split('-')[0]}`, '_blank'); };
                 return { categories, currentCat, symptomsOfCat, currentSym, filteredProducts, selectCategory, selectSymptom, openPDF };
             }
         }).mount('#app');
